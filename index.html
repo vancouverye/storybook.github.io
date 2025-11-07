@@ -68,27 +68,30 @@
     <small>© 2025 연호의 스토리북 커뮤니티</small>
   </footer>
 
-  <!-- Firebase SDK -->
+  <!-- ✅ Firebase SDK는 항상 먼저 로드 -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
   <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyBEBA0ZUVcMBG_G9CtauP02kh4Wneg-5gA",
-  authDomain: "storybook-4a13b.firebaseapp.com",
-  projectId: "storybook-4a13b",
-  storageBucket: "storybook-4a13b.firebasestorage.app",
-  messagingSenderId: "756981563455",
-  appId: "1:756981563455:web:b0bef64ba3ca2fb39a788a",
-  measurementId: "G-CPXLQYTYJY"
-};
-    // Firebase 초기화
+    // 🔑 여기에 네 Firebase 설정(firebaseConfig) 붙여넣기
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID",
+      measurementId: "YOUR_MEASUREMENT_ID"
+    };
+
+    // ✅ Firebase 초기화 (이게 반드시 먼저 실행되어야 함)
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const ADMIN_PASSWORD = "admin1234"; // 관리자 비밀번호
+    // ✅ 관리자 비밀번호
+    const ADMIN_PASSWORD = "admin1234";
 
-    // 페이지 전환
+    // ✅ 페이지 전환
     function showPage(id) {
       document.querySelectorAll("main section").forEach(sec => sec.classList.add("hidden"));
       document.getElementById(id).classList.remove("hidden");
@@ -97,53 +100,65 @@ const firebaseConfig = {
       if (id === "admin") loadAdminSuggestions();
     }
 
-    // 스토리 표시
+    // ✅ 스토리 로드
     async function loadStories() {
       const list = document.getElementById("story-list");
       list.innerHTML = "";
-      const snap = await db.collection("stories").orderBy("title").get();
-      if (snap.empty) {
-        list.innerHTML = "<p>아직 등록된 스토리가 없습니다.</p>";
-        return;
+      try {
+        const snap = await db.collection("stories").orderBy("title").get();
+        if (snap.empty) {
+          list.innerHTML = "<p>아직 등록된 스토리가 없습니다.</p>";
+          return;
+        }
+        snap.forEach(doc => {
+          const s = doc.data();
+          list.innerHTML += `<div class="card"><h4>${s.title}</h4><p>${s.text}</p></div>`;
+        });
+      } catch (err) {
+        console.error("스토리 불러오기 오류:", err);
       }
-      snap.forEach(doc => {
-        const s = doc.data();
-        list.innerHTML += `<div class="card"><h4>${s.title}</h4><p>${s.text}</p></div>`;
-      });
     }
 
-    // 다음 이야기 제안
+    // ✅ 제안 제출
     document.getElementById("suggest-form").addEventListener("submit", async e => {
       e.preventDefault();
       const name = nickname.value.trim();
       const text = suggestText.value.trim();
       if (!name || !text) return;
-      await db.collection("suggestions").add({ name, text, created: new Date() });
-      alert("제안이 등록되었습니다!");
-      nickname.value = "";
-      suggestText.value = "";
-      loadSuggestions();
+      try {
+        await db.collection("suggestions").add({ name, text, created: new Date() });
+        alert("제안이 등록되었습니다!");
+        nickname.value = "";
+        suggestText.value = "";
+        loadSuggestions();
+      } catch (err) {
+        console.error("제안 등록 오류:", err);
+      }
     });
 
-    // 제안 목록 불러오기
+    // ✅ 제안 목록 표시
     async function loadSuggestions() {
       const div = document.getElementById("suggestions");
       div.innerHTML = "";
-      const snap = await db.collection("suggestions").orderBy("created", "desc").get();
-      if (snap.empty) {
-        div.innerHTML = "<p>아직 제안이 없습니다.</p>";
-        return;
+      try {
+        const snap = await db.collection("suggestions").orderBy("created", "desc").get();
+        if (snap.empty) {
+          div.innerHTML = "<p>아직 제안이 없습니다.</p>";
+          return;
+        }
+        snap.forEach(doc => {
+          const d = doc.data();
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `<strong>${d.name}</strong><p>${d.text}</p>`;
+          div.appendChild(card);
+        });
+      } catch (err) {
+        console.error("제안 로드 오류:", err);
       }
-      snap.forEach(doc => {
-        const d = doc.data();
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `<strong>${d.name}</strong><p>${d.text}</p>`;
-        div.appendChild(card);
-      });
     }
 
-    // 관리자 로그인
+    // ✅ 관리자 로그인
     function adminLogin() {
       const pass = document.getElementById("admin-pass").value;
       if (pass === ADMIN_PASSWORD) {
@@ -155,41 +170,47 @@ const firebaseConfig = {
       }
     }
 
-    // 관리자: 제안 승인
+    // ✅ 관리자 제안 목록 로드
     async function loadAdminSuggestions() {
       const div = document.getElementById("admin-suggestions");
       div.innerHTML = "";
-      const snap = await db.collection("suggestions").orderBy("created", "desc").get();
-      if (snap.empty) {
-        div.innerHTML = "<p>등록된 제안이 없습니다.</p>";
-        return;
+      try {
+        const snap = await db.collection("suggestions").orderBy("created", "desc").get();
+        if (snap.empty) {
+          div.innerHTML = "<p>등록된 제안이 없습니다.</p>";
+          return;
+        }
+        snap.forEach(doc => {
+          const d = doc.data();
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <strong>${d.name}</strong>
+            <p>${d.text}</p>
+            <button>스토리로 등록</button>
+          `;
+          const btn = card.querySelector("button");
+          btn.addEventListener("click", () => approveStory(doc.id, d.text));
+          div.appendChild(card);
+        });
+      } catch (err) {
+        console.error("관리자 제안 불러오기 오류:", err);
       }
-
-      snap.forEach(doc => {
-        const d = doc.data();
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <strong>${d.name}</strong>
-          <p>${d.text}</p>
-          <button>스토리로 등록</button>
-        `;
-        const btn = card.querySelector("button");
-        btn.addEventListener("click", () => approveStory(doc.id, d.text));
-        div.appendChild(card);
-      });
     }
 
-    // 승인 함수
+    // ✅ 관리자 승인 함수
     async function approveStory(id, text) {
       const title = prompt("새 스토리 제목을 입력하세요:");
       if (!title) return;
-      await db.collection("stories").add({ title, text });
-      await db.collection("suggestions").doc(id).delete();
-      alert("스토리가 등록되었습니다!");
-      loadAdminSuggestions();
+      try {
+        await db.collection("stories").add({ title, text });
+        await db.collection("suggestions").doc(id).delete();
+        alert("스토리가 등록되었습니다!");
+        loadAdminSuggestions();
+      } catch (err) {
+        console.error("승인 오류:", err);
+      }
     }
   </script>
 </body>
 </html>
-
