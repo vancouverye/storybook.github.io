@@ -1,218 +1,426 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>연호의 스토리북 커뮤니티</title>
-  <style>
-    body { font-family: system-ui, sans-serif; margin: 0; background: #0b0e12; color: #e7ecf2; }
-    header, footer { background: #11161c; padding: 12px; text-align: center; border-bottom: 1px solid #1f2937; }
-    nav button { margin: 4px; padding: 8px 14px; border: none; border-radius: 6px; background: #1e293b; color: #fff; cursor: pointer; }
-    nav button:hover { background: #2563eb; }
-    main { padding: 20px; max-width: 800px; margin: auto; }
-    .hidden { display: none; }
-    textarea, input { width: 100%; padding: 8px; margin-top: 6px; border-radius: 6px; border: 1px solid #1f2937; background: #11161c; color: #fff; }
-    button { padding: 8px 12px; border-radius: 6px; border: none; background: #2563eb; color: white; cursor: pointer; }
-    button:hover { background: #1d4ed8; }
-    .card { background: #11161c; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>연호의 스토리북 커뮤니티</title>
+<style>
+:root{
+  --bg:#0b0e12;--surface:#0f141a;--panel:#11161c;--line:#1f2937;
+  --text:#e7ecf2;--muted:#9aa4b2;--primary:#2563eb;--primary-2:#1d4ed8;--ok:#22c55e;--warn:#f59e0b;--err:#ef4444
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Noto Sans KR,sans-serif}
+header{background:var(--panel);border-bottom:1px solid var(--line);padding:12px}
+.container{max-width:1000px;margin:0 auto;padding:0 16px}
+.top{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.brand{font-weight:900}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.btn{background:var(--surface);border:1px solid var(--line);color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer}
+.btn:hover{border-color:var(--primary)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:white}
+.btn.primary:hover{background:var(--primary-2)}
+main{padding:20px 0}
+.section{display:none}
+.section.show{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+h2,h3{margin:.2em 0 .6em}
+input,textarea,select{width:100%;background:var(--surface);border:1px solid var(--line);color:var(--text);padding:10px;border-radius:10px}
+label{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.kbd{border:1px solid var(--line);border-radius:6px;padding:2px 6px;color:var(--muted);font-size:12px}
+.badge{border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--muted);font-size:12px}
+.list{display:grid;gap:12px}
+hr{border:none;border-top:1px solid var(--line);margin:14px 0}
+.toast{position:fixed;right:16px;bottom:16px;background:#111c;backdrop-filter:blur(6px);color:#fff;padding:10px 14px;border-radius:10px}
+.empty{color:var(--muted)}
+.action{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+</style>
 </head>
 <body>
-  <header>
-    <h2>📚 연호의 스토리북</h2>
+<header>
+  <div class="container">
+    <div class="top">
+      <div class="brand">📚 연호의 스토리북</div>
+      <div class="badge" id="role">읽기 전용</div>
+    </div>
     <nav>
-      <button onclick="showPage('home')">🏠 홈</button>
-      <button onclick="showPage('stories')">📖 스토리북</button>
-      <button onclick="showPage('next')">✨ 다음 이야기는 무엇일까?</button>
-      <button onclick="showPage('admin')">⚙️ 관리자</button>
+      <button class="btn" onclick="show('home')">🏠 홈</button>
+      <button class="btn" onclick="show('stories')">📖 스토리북</button>
+      <button class="btn" onclick="show('groups')">👥 그룹</button>
+      <button class="btn" onclick="show('next')">✨ 다음 이야기</button>
+      <button class="btn" onclick="show('admin')">⚙️ 관리자</button>
     </nav>
-  </header>
+  </div>
+</header>
 
-  <main>
-    <section id="home">
-      <h3>🌟 환영합니다!</h3>
-      <p>이곳은 연호의 스토리북 커뮤니티입니다.<br>
-      관리자가 운영하는 공식 스토리북과, 여러분이 직접 제안할 수 있는 다음 이야기 공간이 있습니다.</p>
-    </section>
+<main class="container">
 
-    <section id="stories" class="hidden">
-      <h3>📖 스토리북</h3>
-      <div id="story-list"></div>
-    </section>
+  <!-- 홈 -->
+  <section id="home" class="section show">
+    <div class="card">
+      <h2>환영합니다!</h2>
+      <p>이곳은 관리자 운영의 <b>스토리북</b>과 참여형 <b>커뮤니티</b>가 함께 있는 공간입니다.</p>
+      <div class="row">
+        <button class="btn primary" onclick="show('stories')">스토리북 보러가기</button>
+        <button class="btn" onclick="show('groups')">그룹으로 가기</button>
+        <button class="btn" onclick="show('next')">다음 이야기 제안</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>인기 스토리</h3>
+      <div id="home-stories" class="list"></div>
+    </div>
+  </section>
 
-    <section id="next" class="hidden">
-      <h3>✨ 다음 이야기는 무엇일까?</h3>
-      <form id="suggest-form">
-        <input type="text" id="nickname" placeholder="닉네임" required>
-        <textarea id="suggest-text" rows="5" placeholder="다음 이야기를 제안해주세요..." required></textarea>
-        <button type="submit">제안 올리기</button>
+  <!-- 스토리북 -->
+  <section id="stories" class="section">
+    <div class="row" style="justify-content:space-between">
+      <h2>스토리북</h2>
+      <span class="kbd">관리자: 스토리 추가/수정/삭제 가능</span>
+    </div>
+    <div id="story-list" class="list"></div>
+  </section>
+
+  <!-- 그룹 -->
+  <section id="groups" class="section">
+    <div class="row" style="justify-content:space-between">
+      <h2>그룹</h2>
+      <span class="kbd">누구나 글 작성 가능 (관리자 생성 그룹)</span>
+    </div>
+
+    <div id="group-list" class="list"></div>
+
+    <div class="card" id="group-post-box" style="display:none">
+      <h3 id="group-title">그룹</h3>
+      <form id="group-post-form">
+        <div class="row">
+          <input id="gp-name" placeholder="닉네임" required style="max-width:240px">
+          <button class="btn" type="submit">글 올리기</button>
+        </div>
+        <textarea id="gp-text" rows="4" placeholder="내용을 입력하세요" required></textarea>
       </form>
-      <h4>💡 최근 제안</h4>
-      <div id="suggestions"></div>
-    </section>
+      <h4>최근 글</h4>
+      <div id="group-posts" class="list"></div>
+    </div>
+  </section>
 
-    <section id="admin" class="hidden">
-      <h3>⚙️ 관리자 패널</h3>
-      <div id="admin-login">
-        <input type="password" id="admin-pass" placeholder="관리자 비밀번호">
-        <button onclick="adminLogin()">로그인</button>
+  <!-- 다음 이야기 -->
+  <section id="next" class="section">
+    <h2>다음 이야기는 무엇일까?</h2>
+    <form id="suggest-form" class="card">
+      <div class="row">
+        <input id="sg-name" placeholder="닉네임" required style="max-width:240px">
+        <button class="btn" type="submit">제안 올리기</button>
       </div>
-      <div id="admin-panel" class="hidden">
-        <h4>📜 제안 목록</h4>
-        <div id="admin-suggestions"></div>
+      <textarea id="sg-text" rows="5" placeholder="다음 이야기를 제안해주세요…" required></textarea>
+    </form>
+    <div class="card">
+      <h3>최근 제안</h3>
+      <div id="suggestions" class="list"></div>
+    </div>
+  </section>
+
+  <!-- 관리자 -->
+  <section id="admin" class="section">
+    <div id="admin-login" class="card">
+      <h2>관리자 로그인</h2>
+      <div class="row">
+        <input id="admin-pass" type="password" placeholder="비밀번호" style="max-width:240px">
+        <button class="btn primary" onclick="adminLogin()">로그인</button>
       </div>
-    </section>
-  </main>
+      <p class="empty">로그인 후 아래 관리 패널이 나타납니다.</p>
+    </div>
 
-  <footer>
-    <small>© 2025 연호의 스토리북 커뮤니티</small>
-  </footer>
+    <div id="admin-panel" class="section">
+      <!-- 스토리 관리 -->
+      <div class="card">
+        <h3>스토리 관리</h3>
+        <form id="story-add" class="action">
+          <input id="st-title" placeholder="제목" required style="flex:1;min-width:220px">
+          <button class="btn" type="submit">스토리 추가</button>
+        </form>
+        <textarea id="st-text" rows="5" placeholder="본문(선택). 제안 승인 시 자동 채움 가능"></textarea>
+        <div id="admin-stories" class="list"></div>
+      </div>
 
-  <!-- ✅ Firebase SDK는 항상 먼저 로드 -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+      <!-- 제안 승인 -->
+      <div class="card">
+        <h3>제안 승인</h3>
+        <div id="admin-suggestions" class="list"></div>
+      </div>
 
-  <script>
-    // 🔑 여기에 네 Firebase 설정(firebaseConfig) 붙여넣기
+      <!-- 그룹 관리 -->
+      <div class="card">
+        <h3>그룹 관리</h3>
+        <form id="group-add" class="action">
+          <input id="gr-name" placeholder="그룹 이름" required style="flex:1;min-width:200px">
+          <input id="gr-desc" placeholder="설명" style="flex:2;min-width:260px">
+          <button class="btn" type="submit">그룹 추가</button>
+        </form>
+        <div id="admin-groups" class="list"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="toast" class="toast" style="display:none"></div>
+
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* ============ Firebase ============ */
+// 🔑 여기 firebaseConfig 전체를 그대로 붙여넣기
 const firebaseConfig = {
-  apiKey: "AIzaSyBEBA0ZUVcMBG_G9CtauP02kh4Wneg-5gA",
-  authDomain: "storybook-4a13b.firebaseapp.com",
-  projectId: "storybook-4a13b",
-  storageBucket: "storybook-4a13b.firebasestorage.app",
-  messagingSenderId: "756981563455",
-  appId: "1:756981563455:web:b0bef64ba3ca2fb39a788a",
-  measurementId: "G-CPXLQYTYJY"
+  /* example:
+  apiKey: "...",
+  authDomain: "storybook-xxxx.firebaseapp.com",
+  projectId: "storybook-xxxx",
+  storageBucket: "storybook-xxxx.appspot.com",
+  messagingSenderId: "....",
+  appId: "...."
+  */
 };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
+/* ============ App State ============ */
+const ADMIN_PASSWORD = "admin1234"; // 필요 시 변경
+let isAdmin = false;
+let currentGroup = null;
 
-    // ✅ Firebase 초기화 (이게 반드시 먼저 실행되어야 함)
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+/* ============ Helpers ============ */
+const $ = (id)=>document.getElementById(id);
+const toast = (msg)=>{ const t=$("toast"); t.textContent=msg; t.style.display="block"; setTimeout(()=>t.style.display="none",1600) }
+function show(id){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("show"));
+  $(id).classList.add("show");
+  if(id==="stories"){ loadStories(); }
+  if(id==="home"){ loadHomeStories(); }
+  if(id==="next"){ loadSuggestions(); }
+  if(id==="groups"){ loadGroups(); }
+  if(id==="admin"){ if(isAdmin){ $("admin-panel").classList.add("show"); } }
+}
 
-    // ✅ 관리자 비밀번호
-    const ADMIN_PASSWORD = "admin1234";
+/* ============ Home / Stories ============ */
+async function loadHomeStories(){
+  const box=$("home-stories"); box.innerHTML="";
+  const snap=await db.collection("stories").orderBy("created","desc").limit(3).get();
+  if(snap.empty){ box.innerHTML='<div class="empty">아직 스토리가 없습니다.</div>'; return; }
+  snap.forEach(doc=>{
+    const s=doc.data();
+    const el=document.createElement("div");
+    el.className="card";
+    el.innerHTML=`<h4>${s.title}</h4><p class="empty">${new Date(s.created?.toDate?.()||Date.now()).toLocaleString()}</p>`;
+    box.appendChild(el);
+  });
+}
 
-    // ✅ 페이지 전환
-    function showPage(id) {
-      document.querySelectorAll("main section").forEach(sec => sec.classList.add("hidden"));
-      document.getElementById(id).classList.remove("hidden");
-      if (id === "stories") loadStories();
-      if (id === "next") loadSuggestions();
-      if (id === "admin") loadAdminSuggestions();
+async function loadStories(){
+  const list=$("story-list"); list.innerHTML="";
+  const snap=await db.collection("stories").orderBy("created","desc").get();
+  if(snap.empty){ list.innerHTML='<div class="empty">등록된 스토리가 없습니다.</div>'; return; }
+  snap.forEach(doc=>{
+    const s=doc.data();
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+      <h3>${s.title}</h3>
+      <p>${(s.text||"").replace(/\n/g,"<br>")}</p>
+      ${isAdmin?'<div class="action"><button class="btn" data-edit>수정</button><button class="btn" data-del>삭제</button></div>':''}
+    `;
+    if(isAdmin){
+      card.querySelector("[data-edit]").onclick=async()=>{
+        const nt=prompt("새 제목:", s.title); if(!nt) return;
+        const nx=prompt("본문(빈칸=유지):", s.text||"");
+        await db.collection("stories").doc(doc.id).update({ title:nt, ...(nx!==""?{text:nx}:{}) });
+        toast("수정됨"); loadStories();
+      };
+      card.querySelector("[data-del]").onclick=async()=>{
+        if(!confirm("이 스토리를 삭제할까요?"))return;
+        await db.collection("stories").doc(doc.id).delete();
+        toast("삭제됨"); loadStories();
+      };
     }
+    list.appendChild(card);
+  });
+}
 
-    // ✅ 스토리 로드
-    async function loadStories() {
-      const list = document.getElementById("story-list");
-      list.innerHTML = "";
-      try {
-        const snap = await db.collection("stories").orderBy("title").get();
-        if (snap.empty) {
-          list.innerHTML = "<p>아직 등록된 스토리가 없습니다.</p>";
-          return;
-        }
-        snap.forEach(doc => {
-          const s = doc.data();
-          list.innerHTML += `<div class="card"><h4>${s.title}</h4><p>${s.text}</p></div>`;
-        });
-      } catch (err) {
-        console.error("스토리 불러오기 오류:", err);
-      }
+/* ============ Suggestions (“다음 이야기”) ============ */
+$("suggest-form").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const name=$("sg-name").value.trim(); const text=$("sg-text").value.trim();
+  if(!name||!text) return;
+  await db.collection("suggestions").add({name,text,created:new Date()});
+  $("sg-name").value=""; $("sg-text").value="";
+  toast("제안이 등록되었습니다!"); loadSuggestions();
+});
+async function loadSuggestions(){
+  const box=$("suggestions"); box.innerHTML="";
+  const snap=await db.collection("suggestions").orderBy("created","desc").get();
+  if(snap.empty){ box.innerHTML='<div class="empty">아직 제안이 없습니다.</div>'; return; }
+  snap.forEach(doc=>{
+    const d=doc.data();
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`<strong>${d.name}</strong><p>${d.text.replace(/\n/g,"<br>")}</p>`;
+    box.appendChild(card);
+  });
+}
+
+/* ============ Groups ============ */
+async function loadGroups(){
+  const list=$("group-list"); list.innerHTML="";
+  const snap=await db.collection("groups").orderBy("created","desc").get();
+  if(snap.empty){ list.innerHTML='<div class="empty">아직 그룹이 없습니다.</div>'; $("group-post-box").style.display="none"; return; }
+  snap.forEach(doc=>{
+    const g=doc.data();
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+      <div class="row" style="justify-content:space-between">
+        <div><h3>${g.name}</h3><div class="empty">${g.desc||""}</div></div>
+        <div class="action">
+          <button class="btn" data-open>들어가기</button>
+          ${isAdmin?'<button class="btn" data-del>삭제</button>':""}
+        </div>
+      </div>
+    `;
+    card.querySelector("[data-open]").onclick=()=>openGroup(doc.id,g);
+    if(isAdmin){
+      card.querySelector("[data-del]").onclick=async()=>{
+        if(!confirm("이 그룹을 삭제할까요? (게시글은 유지됩니다)"))return;
+        await db.collection("groups").doc(doc.id).delete();
+        toast("그룹 삭제됨"); loadGroups();
+      };
     }
+    list.appendChild(card);
+  });
+}
 
-    // ✅ 제안 제출
-    document.getElementById("suggest-form").addEventListener("submit", async e => {
-      e.preventDefault();
-      const name = nickname.value.trim();
-      const text = suggestText.value.trim();
-      if (!name || !text) return;
-      try {
-        await db.collection("suggestions").add({ name, text, created: new Date() });
-        alert("제안이 등록되었습니다!");
-        nickname.value = "";
-        suggestText.value = "";
-        loadSuggestions();
-      } catch (err) {
-        console.error("제안 등록 오류:", err);
-      }
-    });
+async function openGroup(id,g){
+  currentGroup={id, ...g};
+  $("group-title").textContent=`${g.name}`;
+  $("group-post-box").style.display="block";
+  await loadGroupPosts();
+}
 
-    // ✅ 제안 목록 표시
-    async function loadSuggestions() {
-      const div = document.getElementById("suggestions");
-      div.innerHTML = "";
-      try {
-        const snap = await db.collection("suggestions").orderBy("created", "desc").get();
-        if (snap.empty) {
-          div.innerHTML = "<p>아직 제안이 없습니다.</p>";
-          return;
-        }
-        snap.forEach(doc => {
-          const d = doc.data();
-          const card = document.createElement("div");
-          card.className = "card";
-          card.innerHTML = `<strong>${d.name}</strong><p>${d.text}</p>`;
-          div.appendChild(card);
-        });
-      } catch (err) {
-        console.error("제안 로드 오류:", err);
-      }
-    }
+$("group-post-form").addEventListener("submit", async (e)=>{
+  e.preventDefault(); if(!currentGroup){toast("먼저 그룹을 선택하세요"); return;}
+  const name=$("gp-name").value.trim(); const text=$("gp-text").value.trim();
+  if(!name||!text) return;
+  await db.collection("groupPosts").add({groupId:currentGroup.id,name,text,created:new Date()});
+  $("gp-text").value=""; toast("글이 등록되었습니다!"); loadGroupPosts();
+});
+async function loadGroupPosts(){
+  const box=$("group-posts"); box.innerHTML="";
+  const snap=await db.collection("groupPosts").where("groupId","==",currentGroup.id).orderBy("created","desc").get();
+  if(snap.empty){ box.innerHTML='<div class="empty">아직 글이 없습니다.</div>'; return; }
+  snap.forEach(doc=>{
+    const d=doc.data();
+    const el=document.createElement("div"); el.className="card";
+    el.innerHTML=`<strong>${d.name}</strong><p>${d.text.replace(/\n/g,"<br>")}</p>`;
+    box.appendChild(el);
+  });
+}
 
-    // ✅ 관리자 로그인
-    function adminLogin() {
-      const pass = document.getElementById("admin-pass").value;
-      if (pass === ADMIN_PASSWORD) {
-        document.getElementById("admin-login").classList.add("hidden");
-        document.getElementById("admin-panel").classList.remove("hidden");
-        loadAdminSuggestions();
-      } else {
-        alert("비밀번호가 틀렸습니다.");
-      }
-    }
+/* ============ Admin ============ */
+function adminLogin(){
+  const pass=$("admin-pass").value;
+  if(pass===ADMIN_PASSWORD){
+    isAdmin=true; $("role").textContent="관리자"; $("admin-login").style.display="none"; $("admin-panel").classList.add("show"); toast("관리자 모드");
+    // 초기 로드
+    renderAdminLists();
+  }else{ alert("비밀번호가 틀렸습니다."); }
+}
+async function renderAdminLists(){ loadAdminStories(); loadAdminSuggestions(); loadAdminGroups(); }
 
-    // ✅ 관리자 제안 목록 로드
-    async function loadAdminSuggestions() {
-      const div = document.getElementById("admin-suggestions");
-      div.innerHTML = "";
-      try {
-        const snap = await db.collection("suggestions").orderBy("created", "desc").get();
-        if (snap.empty) {
-          div.innerHTML = "<p>등록된 제안이 없습니다.</p>";
-          return;
-        }
-        snap.forEach(doc => {
-          const d = doc.data();
-          const card = document.createElement("div");
-          card.className = "card";
-          card.innerHTML = `
-            <strong>${d.name}</strong>
-            <p>${d.text}</p>
-            <button>스토리로 등록</button>
-          `;
-          const btn = card.querySelector("button");
-          btn.addEventListener("click", () => approveStory(doc.id, d.text));
-          div.appendChild(card);
-        });
-      } catch (err) {
-        console.error("관리자 제안 불러오기 오류:", err);
-      }
-    }
+// 스토리 추가
+$("story-add").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const title=$("st-title").value.trim(); const text=$("st-text").value;
+  if(!title) return;
+  await db.collection("stories").add({title,text,created:new Date()});
+  $("st-title").value=""; $("st-text").value="";
+  toast("스토리 추가됨"); loadStories(); loadAdminStories();
+});
 
-    // ✅ 관리자 승인 함수
-    async function approveStory(id, text) {
-      const title = prompt("새 스토리 제목을 입력하세요:");
-      if (!title) return;
-      try {
-        await db.collection("stories").add({ title, text });
-        await db.collection("suggestions").doc(id).delete();
-        alert("스토리가 등록되었습니다!");
-        loadAdminSuggestions();
-      } catch (err) {
-        console.error("승인 오류:", err);
-      }
-    }
-  </script>
+async function loadAdminStories(){
+  const box=$("admin-stories"); box.innerHTML="";
+  const snap=await db.collection("stories").orderBy("created","desc").get();
+  if(snap.empty){ box.innerHTML='<div class="empty">스토리가 없습니다.</div>'; return; }
+  snap.forEach(doc=>{
+    const s=doc.data();
+    const card=document.createElement("div"); card.className="card";
+    card.innerHTML=`
+      <b>${s.title}</b>
+      <div class="action"><button class="btn" data-edit>수정</button><button class="btn" data-del>삭제</button></div>
+    `;
+    card.querySelector("[data-edit]").onclick=async()=>{
+      const nt=prompt("새 제목:", s.title); if(!nt) return;
+      const nx=prompt("본문(빈칸=유지):", s.text||"");
+      await db.collection("stories").doc(doc.id).update({ title:nt, ...(nx!==""?{text:nx}:{}) });
+      toast("수정됨"); loadAdminStories(); loadStories();
+    };
+    card.querySelector("[data-del]").onclick=async()=>{
+      if(!confirm("삭제할까요?"))return;
+      await db.collection("stories").doc(doc.id).delete();
+      toast("삭제됨"); loadAdminStories(); loadStories();
+    };
+    box.appendChild(card);
+  });
+}
+
+// 제안 승인
+async function loadAdminSuggestions(){
+  const box=$("admin-suggestions"); box.innerHTML="";
+  const snap=await db.collection("suggestions").orderBy("created","desc").get();
+  if(snap.empty){ box.innerHTML='<div class="empty">승인 대기 제안이 없습니다.</div>'; return; }
+  snap.forEach(doc=>{
+    const d=doc.data(); const card=document.createElement("div"); card.className="card";
+    card.innerHTML=`<p style="margin:0 0 6px"><b>${d.name}</b></p><p>${d.text.replace(/\n/g,"<br>")}</p>
+    <div class="action"><button class="btn" data-approve>스토리로 등록</button><button class="btn" data-remove>제안 삭제</button></div>`;
+    card.querySelector("[data-approve]").onclick=async()=>{
+      const title=prompt("새 스토리 제목:"); if(!title) return;
+      await db.collection("stories").add({title,text:d.text,created:new Date()});
+      await db.collection("suggestions").doc(doc.id).delete();
+      toast("승인되어 스토리로 등록됨"); loadAdminSuggestions(); loadStories();
+    };
+    card.querySelector("[data-remove]").onclick=async()=>{
+      if(!confirm("이 제안을 삭제할까요?"))return;
+      await db.collection("suggestions").doc(doc.id).delete(); toast("삭제됨"); loadAdminSuggestions();
+    };
+    box.appendChild(card);
+  });
+}
+
+// 그룹 관리
+$("group-add").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const name=$("gr-name").value.trim(); const desc=$("gr-desc").value.trim();
+  if(!name) return;
+  await db.collection("groups").add({name,desc,created:new Date()});
+  $("gr-name").value=""; $("gr-desc").value="";
+  toast("그룹 생성됨"); loadGroups(); loadAdminGroups();
+});
+async function loadAdminGroups(){
+  const box=$("admin-groups"); box.innerHTML="";
+  const snap=await db.collection("groups").orderBy("created","desc").get();
+  if(snap.empty){ box.innerHTML='<div class="empty">그룹이 없습니다.</div>'; return; }
+  snap.forEach(doc=>{
+    const g=doc.data(); const el=document.createElement("div"); el.className="card";
+    el.innerHTML=`<b>${g.name}</b> <span class="empty">${g.desc||""}</span>
+    <div class="action"><button class="btn" data-del>삭제</button></div>`;
+    el.querySelector("[data-del]").onclick=async()=>{
+      if(!confirm("이 그룹을 삭제할까요? (게시글은 유지)"))return;
+      await db.collection("groups").doc(doc.id).delete(); toast("삭제됨"); loadAdminGroups(); loadGroups();
+    };
+    box.appendChild(el);
+  });
+}
+</script>
 </body>
 </html>
-
