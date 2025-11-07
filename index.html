@@ -1,142 +1,195 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>스토리북(관리자 편집 포함)</title>
-<style>
-:root{--bg:#0b0e12;--panel:#11161c;--ink:#e7ecf2;--mut:#9aa4b2;--line:#1f2937;--acc:#60a5fa;--fs:18px;--lh:1.8}
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Noto Sans KR,sans-serif;background:var(--bg);color:var(--ink)}
-.btn,.in{border:1px solid var(--line);background:#0f141a;color:var(--ink);border-radius:10px;padding:8px 10px}
-.app{display:grid;grid-template-columns:280px 1fr;grid-template-rows:auto 1fr auto;grid-template-areas:"s h""s m""s f";height:100vh}
-.s{grid-area:s;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column}
-.h{grid-area:h;background:#0f141a;border-bottom:1px solid var(--line);padding:8px;display:flex;gap:8px;align-items:center}
-.m{grid-area:m;overflow:auto;padding:18px}.f{grid-area:f;background:#0f141a;border-top:1px solid var(--line);padding:8px;display:flex;gap:8px;align-items:center}
-.title{font-weight:900;font-size:clamp(18px,3vw,26px)}.meta{color:var(--mut);font-size:12px}.list{padding:8px;overflow:auto}
-.item{padding:8px;border-radius:10px;cursor:pointer;border:1px solid transparent}.item:hover{background:#0f141a;border-color:var(--line)}.item.a{border-color:var(--acc);background:color-mix(in srgb,var(--acc),transparent 90%)}
-.ch{padding:8px;border-radius:10px;cursor:pointer}.ch.a{background:color-mix(in srgb,var(--acc),transparent 90%)}
-.content{line-height:var(--lh);font-size:var(--fs)}.content img{max-width:100%;border-radius:14px;display:block;margin:10px auto}
-.bar{height:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;overflow:hidden}.p{height:100%;width:0;background:var(--acc)}
-.badge{border:1px solid var(--line);border-radius:999px;color:var(--mut);padding:1px 8px;font-size:12px}
-@media(max-width:980px){.app{grid-template-columns:1fr;grid-template-areas:"h""m""f"}.s{position:fixed;inset:0 35% 0 0;transform:translateX(-100%);transition:.2s;z-index:20}.s.on{transform:translateX(0)}.bk{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:10}.bk.on{display:block}}
-/* 관리자 서랍 */
-.dr{position:fixed;top:0;right:0;bottom:0;width:380px;background:var(--panel);border-left:1px solid var(--line);transform:translateX(100%);transition:.2s;z-index:30;display:flex;flex-direction:column}
-.dr.on{transform:translateX(0)}.dr .hd{padding:10px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center}.dr .bd{padding:10px;display:flex;flex-direction:column;gap:8px;overflow:auto}
-.ed{min-height:220px;border:1px dashed var(--line);border-radius:12px;background:#0f141a;padding:10px}
-.hidden{display:none}body:not(.admin) .only-admin{display:none!important}
-</style></head><body>
-<div class="app">
-  <aside id="S" class="s"><div style="padding:10px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center">
-    <strong>📚 Storybook</strong><button class="btn" id="Sx">✕</button></div>
-    <div style="padding:8px"><input id="q" class="in" placeholder="스토리/태그 검색"></div>
-    <div id="L" class="list"></div>
-    <div style="padding:8px;border-top:1px dashed var(--line)"><div class="meta" style="margin:6px 0 4px">챕터</div><div id="LC"></div></div>
-  </aside>
-
-  <header class="h">
-    <button class="btn" id="So">☰</button><span class="badge" id="role">읽기 전용</span>
-    <div style="margin-left:auto"></div>
-    <button class="btn" id="login">관리자</button>
-    <button class="btn only-admin" id="logout">로그아웃</button>
-    <button class="btn only-admin" id="edit">✎ 편집</button>
-    <select id="fs" class="in"><option>16</option><option selected>18</option><option>20</option><option>22</option></select>
-    <select id="lh" class="in"><option>1.6</option><option selected>1.8</option><option>2</option></select>
-    <input id="find" class="in" style="max-width:240px" placeholder="이 스토리에서 검색(Enter)">
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>연호의 스토리북 커뮤니티</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #0b0e12; color: #e7ecf2; }
+    header, footer { background: #11161c; padding: 12px; text-align: center; border-bottom: 1px solid #1f2937; }
+    nav button { margin: 4px; padding: 8px 14px; border: none; border-radius: 6px; background: #1e293b; color: #fff; cursor: pointer; }
+    nav button:hover { background: #2563eb; }
+    main { padding: 20px; max-width: 800px; margin: auto; }
+    .hidden { display: none; }
+    textarea, input { width: 100%; padding: 8px; margin-top: 6px; border-radius: 6px; border: 1px solid #1f2937; background: #11161c; color: #fff; }
+    button { padding: 8px 12px; border-radius: 6px; border: none; background: #2563eb; color: white; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    .card { background: #11161c; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>📚 연호의 스토리북</h2>
+    <nav>
+      <button onclick="showPage('home')">🏠 홈</button>
+      <button onclick="showPage('stories')">📖 스토리북</button>
+      <button onclick="showPage('next')">✨ 다음 이야기는 무엇일까?</button>
+      <button onclick="showPage('admin')">⚙️ 관리자</button>
+    </nav>
   </header>
 
-  <main class="m">
-    <div class="title" id="t1">제목</div>
-    <div class="meta" id="t2">—</div>
-    <div style="display:flex;gap:10px;align-items:center;margin:12px 0">
-      <div class="bar" style="width:220px"><div id="prog" class="p"></div></div>
-      <div class="meta" id="pct">0%</div>
-    </div>
-    <article id="C" class="content"></article>
+  <main>
+    <section id="home">
+      <h3>🌟 환영합니다!</h3>
+      <p>이곳은 연호의 스토리북 커뮤니티입니다.<br>
+      관리자가 운영하는 공식 스토리북과, 여러분이 직접 제안할 수 있는 다음 이야기 공간이 있습니다.</p>
+    </section>
+
+    <section id="stories" class="hidden">
+      <h3>📖 스토리북</h3>
+      <div id="story-list"></div>
+    </section>
+
+    <section id="next" class="hidden">
+      <h3>✨ 다음 이야기는 무엇일까?</h3>
+      <form id="suggest-form">
+        <input type="text" id="nickname" placeholder="닉네임" required>
+        <textarea id="suggest-text" rows="5" placeholder="다음 이야기를 제안해주세요..." required></textarea>
+        <button type="submit">제안 올리기</button>
+      </form>
+      <h4>💡 최근 제안</h4>
+      <div id="suggestions"></div>
+    </section>
+
+    <section id="admin" class="hidden">
+      <h3>⚙️ 관리자 패널</h3>
+      <div id="admin-login">
+        <input type="password" id="admin-pass" placeholder="관리자 비밀번호">
+        <button onclick="adminLogin()">로그인</button>
+      </div>
+      <div id="admin-panel" class="hidden">
+        <h4>📜 제안 목록</h4>
+        <div id="admin-suggestions"></div>
+      </div>
+    </section>
   </main>
 
-  <footer class="f">
-    <button class="btn" id="prev">← 이전</button>
-    <button class="btn" id="next">다음 →</button>
-    <div style="margin-left:auto" class="meta">단축키: ←/→, / 또는 Ctrl+F</div>
+  <footer>
+    <small>© 2025 연호의 스토리북 커뮤니티</small>
   </footer>
-</div>
-<div id="BK" class="bk"></div>
 
-<!-- 관리자 서랍 -->
-<aside id="DR" class="dr only-admin" aria-label="관리자">
-  <div class="hd"><strong>관리자 편집</strong><div style="margin-left:auto"></div><button class="btn" id="drX">닫기</button></div>
-  <div class="bd">
-    <label class="meta">스토리</label><select id="selS" class="in"></select>
-    <label class="meta">챕터</label><div style="display:flex;gap:6px"><select id="selC" class="in" style="flex:1"></select><button class="btn" id="addC">+추가</button><button class="btn" id="delC">-삭제</button></div>
-    <input id="ct" class="in" placeholder="챕터 제목">
-    <div id="ed" class="ed" contenteditable="true"></div>
-    <div style="display:flex;gap:6px;align-items:center">
-      <input type="file" id="img" accept="image/*" class="hidden"><button class="btn" id="imgB">이미지</button>
-      <button class="btn" id="saveC">저장</button>
-      <button class="btn" id="exp">내보내기(JSON)</button>
-      <label class="btn">가져오기<input id="imp" type="file" accept="application/json" class="hidden"></label>
-    </div>
-    <div class="meta">이미지: 버튼/붙여넣기/드래그앤드롭 가능</div>
-  </div>
-</aside>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-<script>
-/* ===== 최소 설정 ===== */
-const ADMIN_PASS="changeme"; /* ← 배포 전에 바꾸세요 */
+  <script>
+    // 🔑 여기에 네 Firebase 설정(firebaseConfig) 붙여넣기
+    const firebaseConfig = {
+      // apiKey: "",
+      // authDomain: "",
+      // projectId: "",
+      // storageBucket: "",
+      // messagingSenderId: "",
+      // appId: ""
+    };
 
-/* ===== 샘플 데이터(짧게) ===== */
-const DFT=[{id:"fox",title:"작은 여우의 모험",tags:["동화","모험"],chapters:[
- {title:"숲의 아침",html:"<p>작은 여우 연호는 이슬 맺힌 풀밭을 가르며 달렸어요.</p><p>오늘은 큰 강을 건너 새로운 친구를 만나러 가요.</p>"},
- {title:"강의 노래",html:"<p>강은 반짝이며 노래했고, 여우는 그 노래의 의미를 알아차리려 했죠.</p>"},
- {title:"저녁놀",html:"<p>하늘이 붉게 물들자, 여우는 오늘의 용기를 마음에 저장했어요.</p>"}]},
-{id:"notes",title:"코딩 수첩",tags:["개발","팁"],chapters:[
- {title:"문자열",html:"<p><strong>문자열은 불변</strong>입니다. 결합보다 <code>Array.join()</code>을 고려하세요.</p>"},
- {title:"비동기",html:"<p><em>async/await</em>은 가독성↑, 병렬은 <code>Promise.all</code>.</p>"}]}];
+    // Firebase 초기화
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-/* ===== 상태 ===== */
-const LS={g:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},s:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
-let lib=LS.g("lib",DFT),cur=LS.g("cur",lib[0].id),idx=LS.g("idx",0),fs=LS.g("fs",18),lh=LS.g("lh",1.8),admin=sessionStorage.getItem("adm")==="1";
+    const ADMIN_PASSWORD = "admin1234"; // 관리자 비밀번호
 
-/* ===== 도우미 ===== */
-const $=id=>document.getElementById(id), by=id=>lib.find(s=>s.id===id), clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-function save(){LS.s("lib",lib);LS.s("cur",cur);LS.s("idx",idx);LS.s("fs",fs);LS.s("lh",lh)}
-function setAdmin(on){admin=on; if(on){document.body.classList.add("admin");$("role").textContent="관리자";sessionStorage.setItem("adm","1")}else{document.body.classList.remove("admin");$("role").textContent="읽기 전용";sessionStorage.removeItem("adm")}}
-function hi(html,term){if(!term)return html;const s=term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");return html.replace(new RegExp("("+s+")","gi"),"<mark>$1</mark>")}
-function renderList(filter=""){const q=filter.trim().toLowerCase();$("L").innerHTML="";lib.filter(s=>!q||s.title.toLowerCase().includes(q)||(s.tags||[]).some(t=>t.toLowerCase().includes(q))).forEach(s=>{const d=document.createElement("div");d.className="item"+(s.id===cur?" a":"");d.innerHTML=`<div>${s.title}</div><div class="meta">${(s.tags||[]).join(", ")}</div>`;d.onclick=()=>{cur=s.id;idx=0;save();renderAll();closeSide()};$("L").appendChild(d)});const st=by(cur);$("LC").innerHTML="";st.chapters.forEach((c,i)=>{const x=document.createElement("div");x.className="ch"+(i===idx?" a":"");x.textContent=(i+1)+". "+c.title;x.onclick=()=>{idx=i;save();renderMain($("find").dataset.t||"")};$("LC").appendChild(x)})}
-function renderMain(term=""){const s=by(cur),c=s.chapters[clamp(idx,0,s.chapters.length-1)];idx=s.chapters.indexOf(c);$("t1").textContent=s.title;$("t2").textContent=`${idx+1}/${s.chapters.length}장`;$("C").innerHTML=hi(c.html||"",term);const p=Math.round(((idx+1)/s.chapters.length)*100);$("prog").style.width=p+"%";$("pct").textContent=p+"%";[...$("LC").children].forEach((n,i)=>n.classList.toggle("a",i===idx));save()}
-function renderAll(term=""){renderList($("q").value);renderMain(term);document.documentElement.style.setProperty("--fs",fs+"px");document.documentElement.style.setProperty("--lh",lh);$("fs").value=String(fs);$("lh").value=String(lh)}
+    // 페이지 전환
+    function showPage(id) {
+      document.querySelectorAll("main section").forEach(sec => sec.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+      if (id === "stories") loadStories();
+      if (id === "next") loadSuggestions();
+      if (id === "admin") loadAdminSuggestions();
+    }
 
-/* ===== 이벤트 ===== */
-$("next").onclick=()=>{const s=by(cur);idx=clamp(idx+1,0,s.chapters.length-1);save();renderMain($("find").dataset.t||"")};
-$("prev").onclick=()=>{const s=by(cur);idx=clamp(idx-1,0,s.chapters.length-1);save();renderMain($("find").dataset.t||"")};
-$("find").onkeydown=e=>{if(e.key==="Enter"){const t=e.target.value.trim();e.target.dataset.t=t;renderMain(t)}};
-$("q").oninput=e=>renderList(e.target.value);
-$("fs").onchange=e=>{fs=+e.target.value;save();renderAll()};
-$("lh").onchange=e=>{lh=+e.target.value;save();renderAll()};
-document.addEventListener("keydown",e=>{if(e.target.closest("input,[contenteditable]"))return;if(e.key==="ArrowRight")$("next").click();if(e.key==="ArrowLeft")$("prev").click();if(e.key==="/"||(e.ctrlKey&&e.key.toLowerCase()==="f")){e.preventDefault();$("find").focus();}});
+    // 스토리 표시
+    async function loadStories() {
+      const list = document.getElementById("story-list");
+      list.innerHTML = "";
+      const snap = await db.collection("stories").orderBy("title").get();
+      if (snap.empty) {
+        list.innerHTML = "<p>아직 등록된 스토리가 없습니다.</p>";
+        return;
+      }
+      snap.forEach(doc => {
+        const s = doc.data();
+        list.innerHTML += `<div class="card"><h4>${s.title}</h4><p>${s.text}</p></div>`;
+      });
+    }
 
-/* 사이드바 (모바일) */
-const S=$("S"),BK=$("BK");function openSide(){S.classList.add("on");BK.classList.add("on")}function closeSide(){S.classList.remove("on");BK.classList.remove("on")}
-$("So").onclick=openSide;$("Sx").onclick=closeSide;BK.onclick=closeSide;
+    // 다음 이야기 제안
+    document.getElementById("suggest-form").addEventListener("submit", async e => {
+      e.preventDefault();
+      const name = nickname.value.trim();
+      const text = suggestText.value.trim();
+      if (!name || !text) return;
+      await db.collection("suggestions").add({ name, text, created: new Date() });
+      alert("제안이 등록되었습니다!");
+      nickname.value = "";
+      suggestText.value = "";
+      loadSuggestions();
+    });
 
-/* 관리자 */
-$("login").onclick=()=>{const v=prompt("관리자 비밀번호"); if(v===ADMIN_PASS){setAdmin(true); alert("관리자 모드");} else alert("틀렸습니다")};
-$("logout").onclick=()=>setAdmin(false);
+    // 제안 목록 불러오기
+    async function loadSuggestions() {
+      const div = document.getElementById("suggestions");
+      div.innerHTML = "";
+      const snap = await db.collection("suggestions").orderBy("created", "desc").get();
+      if (snap.empty) {
+        div.innerHTML = "<p>아직 제안이 없습니다.</p>";
+        return;
+      }
+      snap.forEach(doc => {
+        const d = doc.data();
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `<strong>${d.name}</strong><p>${d.text}</p>`;
+        div.appendChild(card);
+      });
+    }
 
-/* 관리자 서랍 */
-const DR=$("DR");$("edit").onclick=()=>DR.classList.add("on");$("drX").onclick=()=>DR.classList.remove("on");
-const selS=$("selS"),selC=$("selC"),ct=$("ct"),ed=$("ed"),img=$("img");
-function refreshSel(){selS.innerHTML=lib.map(s=>`<option value="${s.id}">${s.title}</option>`).join("");selS.value=cur;refreshChap()}
-function refreshChap(){const s=by(selS.value);selC.innerHTML=s.chapters.map((c,i)=>`<option value="${i}">${i+1}. ${c.title}</option>`).join("");selC.value=String(idx);loadChap()}
-function loadChap(){const s=by(selS.value),i=+selC.value,c=s.chapters[i];ct.value=c.title||"";ed.innerHTML=c.html||""}
-selS.onchange=refreshChap;selC.onchange=loadChap;
-$("addC").onclick=()=>{const s=by(selS.value);s.chapters.push({title:"새 챕터",html:"<p>내용</p>"});idx=s.chapters.length-1;save();refreshChap();renderAll()}
-$("delC").onclick=()=>{const s=by(selS.value),i=+selC.value;if(!confirm("삭제할까요?"))return;s.chapters.splice(i,1);idx=Math.max(0,Math.min(idx,s.chapters.length-1));save();refreshChap();renderAll()}
-$("saveC").onclick=()=>{const s=by(selS.value),i=+selC.value,c=s.chapters[i];c.title=ct.value.trim()||c.title;c.html=ed.innerHTML;save();renderAll();alert("저장됨")}
-$("imgB").onclick=()=>img.click();img.onchange=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>insImg(r.result);r.readAsDataURL(f);e.target.value=""}
-ed.addEventListener("paste",e=>{const it=e.clipboardData?.items||[];for(const x of it){if(x.type?.startsWith("image/")){e.preventDefault();const f=x.getAsFile(),r=new FileReader();r.onload=()=>insImg(r.result);f&&r.readAsDataURL(f);return}}});
-ed.addEventListener("dragover",e=>e.preventDefault());ed.addEventListener("drop",e=>{e.preventDefault();const F=e.dataTransfer?.files||[];for(const f of F){if(f.type.startsWith("image/")){const r=new FileReader();r.onload=()=>insImg(r.result);r.readAsDataURL(f)}}});
-function insImg(src){const i=new Image();i.src=src;i.style.maxWidth="100%";i.style.borderRadius="14px";i.style.display="block";i.style.margin="10px auto";const s=window.getSelection(),r=s&&s.rangeCount?s.getRangeAt(0):null;if(!r){const rr=document.createRange();rr.selectNodeContents(ed);rr.collapse(false);s.removeAllRanges();s.addRange(rr)}window.getSelection().getRangeAt(0).insertNode(i);ed.focus()}
-$("exp").onclick=()=>{const s=by(selS.value);const b=new Blob([JSON.stringify(s,null,2)],{type:"application/json"});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download=s.id+".json";a.click();setTimeout(()=>URL.revokeObjectURL(u),300)}
-$("imp").onchange=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o.id||!o.title||!Array.isArray(o.chapters))throw new Error("형식오류");lib=lib.filter(x=>x.id!==o.id);lib.unshift(o);cur=o.id;idx=0;save();refreshSel();renderAll();alert("가져오기 완료")}catch(err){alert("실패: "+err.message)}};r.readAsText(f,"utf-8");e.target.value=""}
+    // 관리자 로그인
+    function adminLogin() {
+      const pass = document.getElementById("admin-pass").value;
+      if (pass === ADMIN_PASSWORD) {
+        document.getElementById("admin-login").classList.add("hidden");
+        document.getElementById("admin-panel").classList.remove("hidden");
+        loadAdminSuggestions();
+      } else {
+        alert("비밀번호가 틀렸습니다.");
+      }
+    }
 
-/* 초기화 */
-function init(){if(!by(cur))cur=lib[0].id;document.documentElement.style.setProperty("--fs",fs+"px");document.documentElement.style.setProperty("--lh",lh);renderAll();setAdmin(admin);refreshSel()}
-init();
-</script>
-</body></html>
+    // 관리자: 제안 승인
+    async function loadAdminSuggestions() {
+      const div = document.getElementById("admin-suggestions");
+      div.innerHTML = "";
+      const snap = await db.collection("suggestions").orderBy("created", "desc").get();
+      if (snap.empty) {
+        div.innerHTML = "<p>등록된 제안이 없습니다.</p>";
+        return;
+      }
+
+      snap.forEach(doc => {
+        const d = doc.data();
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <strong>${d.name}</strong>
+          <p>${d.text}</p>
+          <button>스토리로 등록</button>
+        `;
+        const btn = card.querySelector("button");
+        btn.addEventListener("click", () => approveStory(doc.id, d.text));
+        div.appendChild(card);
+      });
+    }
+
+    // 승인 함수
+    async function approveStory(id, text) {
+      const title = prompt("새 스토리 제목을 입력하세요:");
+      if (!title) return;
+      await db.collection("stories").add({ title, text });
+      await db.collection("suggestions").doc(id).delete();
+      alert("스토리가 등록되었습니다!");
+      loadAdminSuggestions();
+    }
+  </script>
+</body>
+</html>
