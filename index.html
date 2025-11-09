@@ -3,104 +3,117 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>연호의 스토리북</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<title>연호의 스토리북 — Final High-End Version</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#0a0f18; --card:#0f1726cc; --line:#1c2a40;
-  --ink:#eaf1fb; --mut:#9fb0c3; --pri:#6ea3ff; --pri2:#4f7ef3;
-  --r:16px;
+:root{
+  --bg:#0a0f18; --bg2:#0d1220;
+  --glass:#0f1726cc; --glass-solid:#0f1726;
+  --ink:#eaf1fb; --mut:#99aec5; --mute:#7d91a7;
+  --line:#1c2a40; --pri:#77a5ff; --pri-2:#5c86f7; --pri-3:#3f65e6;
+  --r:16px; --shadow:0 22px 55px rgba(0,0,0,.45);
 }
-body {
-  margin:0;
-  font-family:Inter,system-ui,sans-serif;
-  background:linear-gradient(180deg,#0a0f18,#0c1424 50%,#0a0f18);
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Inter,Pretendard,system-ui,-apple-system;
+  background:linear-gradient(180deg,#0a0f18,#0c1424 45%,#0a0f18);
   color:var(--ink);
 }
-.header {position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;
-  background:#0c141fbf;padding:10px 16px;border-bottom:1px solid var(--line);backdrop-filter:blur(10px);}
-.btn {background:#101a2b;border:1px solid var(--line);color:var(--ink);
-  padding:8px 12px;border-radius:10px;cursor:pointer;transition:all .15s;}
-.btn:hover {border-color:#2a3b5e;}
-.btn.pri {background:linear-gradient(180deg,var(--pri),var(--pri2));color:#fff;border:none;}
-.app {max-width:1200px;margin:0 auto;padding:20px;}
-.section {display:none;}
-.section.show {display:block;}
-.tabs {display:flex;gap:10px;overflow:auto;padding:6px 0;}
-.tab {border:1px solid var(--line);background:#0e1627;color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer;}
-.tab.active {border-color:var(--pri);background:var(--pri2);}
-.story {background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:8px 0;}
-.story h4 {margin:0;}
-.story p {margin:6px 0;color:var(--mut);}
-.story .actions {display:flex;gap:8px;margin-top:8px;}
-.empty {color:var(--mut);}
-.spinner {width:40px;height:40px;border:3px solid #1a2840;border-top-color:var(--pri);border-radius:50%;animation:spin 1s linear infinite;margin:20px auto;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.toast {position:fixed;bottom:16px;right:16px;background:#0b1322e6;padding:10px 14px;border-radius:8px;display:none;}
-.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:100;}
+.app{display:grid;grid-template-rows:68px 1fr;min-height:100vh}
+.header{position:sticky;top:0;display:flex;align-items:center;gap:12px;padding:10px 16px;
+background:#0b1322cc;border-bottom:1px solid var(--line);backdrop-filter:blur(12px);z-index:100}
+.brand{font-weight:800;font-size:18px}
+.header-nav{margin-left:auto;display:flex;gap:8px}
+.btn{background:linear-gradient(180deg,#111b33,#0d1629);border:1px solid var(--line);
+color:var(--ink);padding:8px 12px;border-radius:12px;cursor:pointer;transition:.2s}
+.btn:hover{border-color:#2a3b5e;transform:translateY(-1px)}
+.btn.pri{background:linear-gradient(180deg,var(--pri),var(--pri-2));color:#fff;border:none}
+.section{display:none}.section.show{display:block}
+.main{padding:22px}.container{max-width:1200px;margin:0 auto;display:grid;gap:18px}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);
+box-shadow:var(--shadow);padding:16px}
+.tabs{display:flex;gap:10px;overflow:auto;padding:10px 2px}
+.tab{border:1px solid var(--line);background:#0e1627;color:var(--ink);padding:8px 14px;
+border-radius:999px;cursor:pointer;white-space:nowrap}
+.tab.active{border-color:transparent;background:linear-gradient(90deg,var(--pri-2),var(--pri-3));color:#fff}
+.story{background:linear-gradient(180deg,#0f1a2e,#0f1729);border:1px solid var(--line);
+border-radius:18px;padding:16px;margin:8px 0;position:relative}
+.story h4{margin:0}.story p{margin:6px 0;color:var(--mute)}
+.actions{display:flex;gap:8px;margin-top:8px}
+.spinner{width:44px;height:44px;border:3px solid #1a2840;border-top-color:var(--pri);
+border-radius:50%;animation:spin 1s linear infinite;margin:20px auto}@keyframes spin{to{transform:rotate(360deg)}}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:300}
 .modal.on{display:flex}
-.modal .box{background:#0f1726;border:1px solid var(--line);border-radius:12px;padding:16px;width:min(700px,90vw);}
-#version-box{position:fixed;right:14px;bottom:14px;background:rgba(15,23,38,0.8);border:1px solid #1c2a40;border-radius:10px;font-size:13px;color:#9fb0c3;padding:6px 12px;backdrop-filter:blur(10px);z-index:200;}
-#version-banner{position:fixed;top:-80px;left:0;right:0;background:rgba(20,33,60,0.95);border-bottom:1px solid #2a3b5e;color:#eaf1fb;font-size:15px;text-align:center;padding:12px 20px;backdrop-filter:blur(12px);z-index:300;transition:top .5s ease;}
+.modal .box{width:min(780px,92vw);background:var(--glass-solid);border:1px solid var(--line);
+border-radius:18px;box-shadow:var(--shadow);padding:16px}
+.toast{position:fixed;right:16px;bottom:16px;background:#0b1322e6;border:1px solid var(--line);
+padding:10px 14px;border-radius:12px;display:none}
+input,textarea,select{width:100%;background:#0b1422;border:1px solid var(--line);
+color:var(--ink);padding:10px;border-radius:12px}
 </style>
 </head>
 <body>
-<div class="header">
-  <div><b>📘 연호의 스토리북</b></div>
-  <div>
-    <button class="btn" data-page="home">홈</button>
-    <button class="btn" data-page="stories">스토리북</button>
-    <button class="btn" data-page="next">다음 이야기</button>
-    <button class="btn pri" data-page="admin">관리자</button>
+<div class="app">
+  <div class="header">
+    <div class="brand">📚 연호의 스토리북</div>
+    <div class="header-nav">
+      <button class="btn" data-page="home">홈</button>
+      <button class="btn" data-page="stories">스토리북</button>
+      <button class="btn" data-page="admin">관리자</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="container">
+      <section id="home" class="section show">
+        <div class="card">
+          <h2>환영합니다 👋</h2>
+          <p>시리즈별 책을 보고, 새로운 이야기를 만들어보세요.</p>
+        </div>
+      </section>
+
+      <section id="stories" class="section">
+        <div class="card">
+          <h2>스토리북</h2>
+          <div id="series-tabs" class="tabs"></div>
+          <div id="series-desc" class="empty"></div>
+          <div id="story-list"></div>
+          <div id="story-loading" class="spinner" style="display:none"></div>
+        </div>
+      </section>
+
+      <section id="admin" class="section">
+        <div id="admin-login" class="card">
+          <h2>관리자 로그인</h2>
+          <input id="admin-pass" type="password" placeholder="비밀번호 입력">
+          <button class="btn pri" id="btnAdminLogin">로그인</button>
+        </div>
+        <div id="admin-panel" class="card" style="display:none">
+          <h3>관리 콘솔</h3>
+          <button class="btn pri" id="openSeries">+ 시리즈 추가</button>
+          <button class="btn pri" id="openStory">+ 책 추가</button>
+          <div id="admin-series"></div>
+          <div id="admin-stories"></div>
+        </div>
+      </section>
+    </div>
   </div>
 </div>
 
-<div class="app">
-  <section id="home" class="section show">
-    <h2>환영합니다 👋</h2>
-    <p>스토리북, 시리즈, 다음 이야기 제안을 자유롭게 탐색해보세요.</p>
-  </section>
+<div id="toast" class="toast"></div>
 
-  <section id="stories" class="section">
-    <h2>시리즈별 스토리북</h2>
-    <div id="series-tabs" class="tabs"></div>
-    <div id="series-desc" class="empty"></div>
-    <div id="story-list"></div>
-    <div id="story-loading" class="spinner" style="display:none;"></div>
-  </section>
+<!-- 버전 표시 -->
+<div id="version-box" style="position:fixed;right:14px;bottom:14px;
+background:rgba(15,23,38,0.8);border:1px solid #1c2a40;
+border-radius:10px;font-size:13px;color:#9fb0c3;
+padding:6px 12px;backdrop-filter:blur(10px);z-index:200;">v0.0.0</div>
 
-  <section id="next" class="section">
-    <h2>다음 이야기는 무엇일까 ✨</h2>
-    <form id="suggest-form">
-      <select id="sg-series" required></select>
-      <input id="sg-name" placeholder="닉네임" required style="padding:8px;border-radius:8px;">
-      <textarea id="sg-text" placeholder="다음 이야기를 써주세요…" rows="4" style="width:100%;margin-top:8px;padding:8px;border-radius:8px;"></textarea><br>
-      <button class="btn pri" type="submit">등록</button>
-    </form>
-    <div id="suggestions"></div>
-  </section>
-
-  <section id="admin" class="section">
-    <h2>관리자</h2>
-    <input id="admin-pass" type="password" placeholder="비밀번호" style="padding:8px;border-radius:8px;">
-    <button class="btn pri" id="btnAdminLogin">로그인</button>
-    <div id="admin-panel" style="display:none;margin-top:20px;">
-      <button class="btn pri" id="openSeries">+ 시리즈 추가</button>
-      <button class="btn pri" id="openStory">+ 책 추가</button>
-    </div>
-  </section>
-</div>
-
-<div id="version-box">v0.0.0</div>
-<div id="version-banner"><span id="version-banner-text"></span><button id="banner-close" style="margin-left:12px;background:none;border:none;color:#9fb0c3;cursor:pointer;font-size:14px;">×</button></div>
-<div class="toast" id="toast"></div>
-<div class="modal" id="modal"><div class="box"><div class="row" style="justify-content:space-between"><h3 id="modal-title"></h3><button class="btn" id="modal-close">닫기</button></div><div id="modal-body"></div></div></div>
-
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <script>
+/* ================= Firebase ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyBEBA0ZUVcMBG_G9CtauP02kh4Wneg-5gA",
   authDomain: "storybook-4a13b.firebaseapp.com",
@@ -113,80 +126,113 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+/* ================= 기본 유틸 ================= */
 const $=id=>document.getElementById(id);
-const $$=s=>Array.from(document.querySelectorAll(s));
+const $$=sel=>Array.from(document.querySelectorAll(sel));
+function toast(msg){const t=$("toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",1800);}
 function show(id){$$(".section").forEach(s=>s.classList.remove("show"));$(id).classList.add("show");}
-function toast(m){const t=$("toast");t.textContent=m;t.style.display="block";setTimeout(()=>t.style.display="none",1800);}
-function openModal(t,h){$("modal-title").textContent=t;$("modal-body").innerHTML=h;$("modal").classList.add("on");}
-function closeModal(){$("modal").classList.remove("on");}
-$("modal-close").onclick=closeModal;
+function esc(s){return String(s??"").replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));}
+
+/* ================= 네비 ================= */
 $$("[data-page]").forEach(b=>b.onclick=()=>show(b.dataset.page));
 
-let isAdmin=false,currentSeries="ALL";
+/* ================= STORIES ================= */
+let currentSeries="ALL",isAdmin=false;
 
-/* 시리즈 */
 async function loadSeriesTabs(){
-  $("series-tabs").innerHTML="";$("series-desc").textContent="";$("story-list").innerHTML="";
-  const all=document.createElement("button");all.className="tab";all.textContent="전체";all.onclick=()=>{currentSeries="ALL";highlightTabs();loadStories();};$("series-tabs").appendChild(all);
+  $("series-tabs").innerHTML="";$("series-desc").textContent="";
+  const tabs=$("series-tabs");
+  const all=document.createElement("button");
+  all.className="tab";all.textContent="전체";
+  all.onclick=()=>{currentSeries="ALL";highlightTabs();loadStories();};
+  tabs.appendChild(all);
   const snap=await db.collection("series").orderBy("created","desc").get();
-  snap.forEach(doc=>{const s=doc.data();const b=document.createElement("button");b.className="tab";b.textContent=s.name;b.dataset.sid=doc.id;b.onclick=()=>{currentSeries=doc.id;highlightTabs();$("series-desc").textContent=s.desc||"";loadStories();};$("series-tabs").appendChild(b);});
-  highlightTabs();loadStories();
+  snap.forEach(doc=>{
+    const s=doc.data();
+    const b=document.createElement("button");
+    b.className="tab";b.textContent=s.name;b.dataset.sid=doc.id;
+    b.onclick=()=>{currentSeries=doc.id;highlightTabs();$("series-desc").textContent=s.desc||"";loadStories();};
+    tabs.appendChild(b);
+  });
+  currentSeries="ALL";highlightTabs();loadStories();
 }
-function highlightTabs(){$$(".tab").forEach(t=>t.classList.toggle("active",(t.dataset.sid===currentSeries)||(currentSeries==="ALL"&&t.textContent==="전체")));}
-
+function highlightTabs(){$$(".tab").forEach(t=>t.classList.toggle("active",t.dataset.sid===currentSeries||t.textContent==="전체"&&currentSeries==="ALL"));}
 async function loadStories(){
-  const list=$("story-list");list.innerHTML="";
-  let q=db.collection("stories").orderBy("created","desc");if(currentSeries!=="ALL")q=q.where("seriesId","==",currentSeries);
-  const snap=await q.get();if(snap.empty){list.innerHTML='<div class="empty">책이 없습니다.</div>';return;}
-  snap.forEach(d=>{const s=d.data();const e=document.createElement("div");e.className="story";e.innerHTML=`<h4>${s.title}</h4><p>${(s.text||"").slice(0,200)}...</p>`;list.appendChild(e);});
+  const list=$("story-list");list.innerHTML="";$("story-loading").style.display="block";
+  let q=db.collection("stories").orderBy("created","desc");
+  if(currentSeries!=="ALL")q=q.where("seriesId","==",currentSeries);
+  const snap=await q.get();$("story-loading").style.display="none";
+  if(snap.empty){list.innerHTML='<div class="empty">책이 없습니다.</div>';return;}
+  snap.forEach(doc=>{const s=doc.data();const el=document.createElement("div");el.className="story";el.innerHTML=`<h4>${s.title}</h4><p>${(s.text||"").slice(0,200)}${(s.text||"").length>200?"…":""}</p>`;list.appendChild(el);});
+}
+loadSeriesTabs();
+
+/* ================= ADMIN ================= */
+$("btnAdminLogin").onclick=()=>{
+  if($("admin-pass").value==="admin1234"){
+    isAdmin=true;$("admin-login").style.display="none";$("admin-panel").style.display="block";renderAdmin();toast("관리자 로그인 완료");
+  }else alert("비밀번호 오류");
+};
+$("openSeries").onclick=()=>{
+  const name=prompt("시리즈 이름?");if(!name)return;
+  const desc=prompt("설명 (선택)");
+  db.collection("series").add({name,desc,created:new Date()}).then(()=>{toast("시리즈 추가됨");loadSeriesTabs();renderAdmin();});
+};
+$("openStory").onclick=async()=>{
+  const sSnap=await db.collection("series").get();
+  const opts=sSnap.docs.map(d=>`${d.data().name} (${d.id})`).join("\n");
+  const sid=prompt("시리즈 ID 입력:\n"+opts);if(!sid)return;
+  const title=prompt("책 제목?");const text=prompt("내용?");
+  await db.collection("stories").add({seriesId:sid,title,text,created:new Date()});
+  toast("책 추가됨");loadStories();renderAdmin();
+};
+async function renderAdmin(){
+  const s=$("admin-series"),t=$("admin-stories");s.innerHTML="";t.innerHTML="";
+  const sSnap=await db.collection("series").orderBy("created","desc").get();
+  sSnap.forEach(d=>{const x=d.data();s.innerHTML+=`<div class='story'><h4>${x.name}</h4><p>${x.desc||""}</p></div>`;});
+  const tSnap=await db.collection("stories").orderBy("created","desc").get();
+  tSnap.forEach(d=>{const x=d.data();t.innerHTML+=`<div class='story'><h4>${x.title}</h4><p>${x.seriesId}</p></div>`;});
 }
 
-/* 관리자 */
-$("btnAdminLogin").onclick=()=>{if($("admin-pass").value==="admin1234"){isAdmin=true;$("admin-panel").style.display="block";toast("관리자 모드");}else alert("비밀번호 오류");};
-$("openSeries").onclick=()=>{openModal("시리즈 추가",`<form id="formSeries"><input id="se-name" placeholder="이름" required><input id="se-desc" placeholder="설명"><button class="btn pri">추가</button></form>`);document.getElementById("formSeries").onsubmit=async e=>{e.preventDefault();await db.collection("series").add({name:$("se-name").value,desc:$("se-desc").value,created:new Date()});toast("시리즈 추가됨");closeModal();loadSeriesTabs();};};
-$("openStory").onclick=async()=>{const s=await db.collection("series").get();let opt="";s.forEach(d=>opt+=`<option value="${d.id}">${d.data().name}</option>`);openModal("책 추가",`<form id="formStory"><select id="st-series">${opt}</select><input id="st-title" placeholder="제목" required><textarea id="st-text" rows="4" placeholder="내용"></textarea><button class="btn pri">추가</button></form>`);document.getElementById("formStory").onsubmit=async e=>{e.preventDefault();await db.collection("stories").add({seriesId:$("st-series").value,title:$("st-title").value,text:$("st-text").value,created:new Date()});toast("책 추가됨");closeModal();loadStories();};};
+/* ================= VERSION SYSTEM ================= */
+document.body.insertAdjacentHTML("afterbegin",`
+  <div id="version-banner" style="position:fixed;top:-80px;left:0;right:0;
+  background:rgba(20,33,60,0.95);border-bottom:1px solid #2a3b5e;
+  color:#eaf1fb;text-align:center;padding:12px 20px;
+  backdrop-filter:blur(12px);z-index:300;transition:top .5s ease;">
+  <span id="version-banner-text"></span>
+  <button id="banner-close" style="margin-left:12px;background:none;border:none;
+  color:#9fb0c3;cursor:pointer;font-size:14px;">×</button></div>`);
 
-/* 다음 이야기 */
-$("suggest-form").onsubmit=async e=>{e.preventDefault();await db.collection("suggestions").add({seriesId:$("sg-series").value,name:$("sg-name").value,text:$("sg-text").value,created:new Date()});toast("제안됨");$("sg-text").value="";};
-
-/* ========== 버전 시스템 + 공지 배너 ========== */
 async function loadVersion(){
-  const doc=await db.collection("meta").doc("version").get();
-  if(doc.exists){const v=doc.data();$("version-box").textContent=v.number||"v0.0.0";$("version-box").title="업데이트: "+new Date(v.updated?.toDate?.()||Date.now()).toLocaleString();}
+  try{
+    const doc=await db.collection("meta").doc("version").get();
+    if(doc.exists){
+      const v=doc.data();
+      $("version-box").textContent=v.number||"v0.0.0";
+      $("version-box").title="업데이트: "+new Date(v.updated?.toDate?.()||Date.now()).toLocaleString();
+      loadVersionNotice(v);
+    }
+  }catch(e){console.error("버전 불러오기 실패",e);}
 }
 loadVersion();
-
-/* 공지 배너 */
-async function loadVersionNotice(){
-  const doc=await db.collection("meta").doc("version").get();if(!doc.exists)return;
-  const v=doc.data();const cur=v.number||"v0.0.0";const seen=localStorage.getItem("lastVersion");
-  if(seen!==cur){$("version-banner-text").textContent=`${cur} — ${v.message||"새 업데이트가 적용되었습니다!"}`;$("version-banner").style.top="0";$("banner-close").onclick=()=>{$("version-banner").style.top="-80px";localStorage.setItem("lastVersion",cur);};}
+function loadVersionNotice(v){
+  const cur=v.number||"v0.0.0";
+  const last=localStorage.getItem("lastVersion");
+  if(last!==cur){
+    const msg=v.message||"새로운 업데이트가 적용되었습니다!";
+    $("version-banner-text").textContent=`${cur} — ${msg}`;
+    $("version-banner").style.top="0";
+    $("banner-close").onclick=()=>{ $("version-banner").style.top="-80px"; localStorage.setItem("lastVersion",cur); };
+  }
 }
-loadVersionNotice();
-
-/* 버전 수정/이력 */
 function incrementVersion(v){const p=v.replace(/[^\d.]/g,"").split(".").map(n=>parseInt(n)||0);while(p.length<3)p.push(0);p[2]++;if(p[2]>=10){p[2]=0;p[1]++;}if(p[1]>=10){p[1]=0;p[0]++;}return`v${p.join(".")}`;}
 function openVersionEditor(){
-  openModal("버전 수정",`
-  <form id="formVersion" class="grid">
-    <input id="v-num" placeholder="v1.0.0" required>
-    <input id="v-user" placeholder="작성자(선택)">
-    <textarea id="v-msg" rows="3" placeholder="공지 메시지"></textarea>
-    <div class="row" style="justify-content:flex-end;gap:8px">
-      <button class="btn" type="button" id="autoIncBtn">자동 증가</button>
-      <button class="btn pri" type="submit">저장</button>
-    </div>
-  </form>`);
-  db.collection("meta").doc("version").get().then(doc=>{if(doc.exists){$("v-num").value=doc.data().number||"";$("v-msg").value=doc.data().message||"";}});
-  $("autoIncBtn").onclick=()=>{$("v-num").value=incrementVersion($("v-num").value||"v0.0.0");};
-  document.getElementById("formVersion").onsubmit=async e=>{
-    e.preventDefault();
-    const num=$("v-num").value.trim(),user=$("v-user").value.trim()||"관리자",msg=$("v-msg").value.trim()||"새 업데이트가 적용되었습니다!";
-    await db.collection("meta").doc("version").set({number:num,updated:new Date(),message:msg});
-    await db.collection("versionHistory").add({version:num,changedBy:user,message:msg,date:new Date()});
-    toast("버전 업데이트 완료");closeModal();loadVersion();loadVersionNotice();
-  };
+  const num=prompt("새 버전 번호 (예: v1.2.0)","v0.0.0");
+  if(!num)return;
+  const msg=prompt("공지 메시지","새로운 업데이트가 적용되었습니다!");
+  db.collection("meta").doc("version").set({number:num,message:msg,updated:new Date()});
+  db.collection("versionHistory").add({version:num,message:msg,date:new Date()});
+  localStorage.setItem("lastVersion",num);
+  toast("버전 업데이트 완료");loadVersion();
 }
-</script>
-</body>
-</html>
