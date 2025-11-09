@@ -45,8 +45,7 @@
     .story{
       background:linear-gradient(180deg,#0f1a2e,#0f1729);border:1px solid var(--line);
       border-radius:18px;padding:16px;
-      cursor:pointer; /* ✅ 카드 전체 클릭 가능 */
-      transition:transform .15s;
+      cursor:pointer;transition:transform .15s;
     }
     .story:hover{transform:translateY(-2px);background:#101a2f}
     .story h4{margin:0}.story p{margin:6px 0;color:var(--mute)}
@@ -60,20 +59,15 @@
     .modal.on{display:flex}
     .modal .box{
       width:min(780px,92vw);
-      max-height:90vh;         /* ✅ 긴 본문도 화면 안에서 스크롤 */
-      overflow-y:auto;         /* ✅ 내부 스크롤 */
-      background:var(--solid);
-      border:1px solid var(--line);
-      border-radius:18px;
-      box-shadow:var(--sh);
-      padding:16px;
+      max-height:90vh; overflow-y:auto;  /* 긴 본문도 보기 OK */
+      background:var(--solid);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:16px
     }
     hr{border:none;border-top:1px solid var(--line);margin:12px 0}
     .mut{color:var(--mut)}
     .kbd{border:1px solid var(--line);border-radius:8px;padding:3px 8px;color:var(--mut);font-size:12px}
     .badge{display:inline-block;padding:2px 8px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:#b9c8dc}
 
-    /* ✅ 모바일 최적화 */
+    /* 모바일 최적화 */
     @media(max-width:600px){
       .main{padding:12px}
       .grid.cols-2{grid-template-columns:1fr}
@@ -95,6 +89,8 @@
       <button class="btn" data-page="stories">스토리북</button>
       <button class="btn" data-page="next">책 만들기</button>
       <button class="btn" data-page="groups">그룹</button>
+      <button class="btn" data-page="leaderboard">리더보드</button><!-- ✅ 추가 -->
+      <button class="btn" data-page="profile">프로필</button><!-- ✅ 추가 -->
       <button class="btn pri" data-page="admin">관리자</button>
     </div>
   </div>
@@ -107,11 +103,15 @@
       <section id="home" class="section show">
         <div class="card">
           <h2>환영합니다 👋</h2>
-          <p>그룹에 들어가 스포일러를 읽으실수 있어요. ‘다음 이야기’에서 누구나 새로운 이야기를 제안할 수 있어요. 스토리북에 들어가 책 을 읽으세요!     [업데이트 로그] -</p>
+          <p>그룹에 들어가 스포일러를 읽으실수 있어요. ‘책 만들기’에서 누구나 새로운 이야기를 제안할 수 있어요.</p>
         </div>
         <div class="card">
           <h3>최근 책</h3>
           <div id="home-stories" class="grid cols-2"></div>
+        </div>
+        <div class="card">
+          <h3>🏆 리더보드 Top 10</h3>
+          <div id="leaderboard-home" class="grid"></div>
         </div>
       </section>
 
@@ -193,6 +193,27 @@
         </div>
       </section>
 
+      <!-- LEADERBOARD (Top 10) -->
+      <section id="leaderboard" class="section">
+        <div class="card">
+          <h2>🏆 리더보드 Top 10</h2>
+          <p class="mut">가장 높은 누적 포인트 순</p>
+          <div id="leaderboard-list" class="grid cols-2"></div>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section id="profile" class="section">
+        <div class="card">
+          <h2>👤 내 프로필</h2>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0">
+            <input id="prof-name" placeholder="닉네임" style="max-width:260px">
+            <button class="btn" id="btnSaveName">닉네임 저장</button>
+          </div>
+          <div id="profile-box" class="mut">닉네임을 저장하고 퀴즈를 풀면 내 포인트가 표시됩니다.</div>
+        </div>
+      </section>
+
       <!-- ADMIN -->
       <section id="admin" class="section">
         <div id="admin-login" class="card">
@@ -230,7 +251,7 @@
           </div>
 
           <div style="margin-top:14px">
-            <h4>‘다음 이야기’ 제안 관리</h4>
+            <h4>‘책 만들기’ 제안 관리</h4>
             <div id="admin-next"></div>
           </div>
         </div>
@@ -245,7 +266,10 @@
   <div class="box">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
       <h3 id="modal-title">Modal</h3>
-      <button class="btn" id="modal-close">닫기</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn" id="modal-quiz" style="display:none">퀴즈 풀기</button><!-- ✅ 동적 표시 -->
+        <button class="btn" id="modal-close">닫기</button>
+      </div>
     </div>
     <div id="modal-body"></div>
   </div>
@@ -279,16 +303,27 @@ const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 const esc = s => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 function show(id){ $$(".section").forEach(el=>el.classList.remove("show")); $(id).classList.add("show"); }
 function toast(msg){ const t=$("toast"); t.textContent=msg; t.style.display="block"; setTimeout(()=>t.style.display="none",1600); }
-function openModal(title,body){ $("modal-title").textContent=title; $("modal-body").innerHTML=body; $("modal").classList.add("on"); }
+
+/* 모달 유틸(퀴즈 버튼 제어 포함) */
+function openModal(title,body,{quizFor=null,quizTitle=""}={}){
+  $("modal-title").textContent=title;
+  $("modal-body").innerHTML=body;
+  const qbtn=$("modal-quiz");
+  if(quizFor){ qbtn.style.display="inline-block"; qbtn.onclick=()=>openQuiz(quizFor, quizTitle||title); }
+  else { qbtn.style.display="none"; qbtn.onclick=null; }
+  $("modal").classList.add("on");
+}
 $("modal-close").onclick = () => $("modal").classList.remove("on");
 
 /* ================== 네비 ================== */
 $$("[data-page]").forEach(b => b.addEventListener("click", () => {
   show(b.dataset.page);
-  if (b.dataset.page==="home") loadHome();
+  if (b.dataset.page==="home") { loadHome(); renderLeaderboardHome(); }
   if (b.dataset.page==="stories") loadSeriesTabs();
   if (b.dataset.page==="next") loadNext();
   if (b.dataset.page==="groups") loadGroups();
+  if (b.dataset.page==="leaderboard") renderLeaderboard();
+  if (b.dataset.page==="profile") loadProfile();
   if (b.dataset.page==="admin" && isAdmin) renderAdmin();
 }));
 
@@ -301,12 +336,15 @@ async function loadHome(){
     return;
   }
   snap.forEach(d=>{
-    const s=d.data();
+    const s=d.data(); const sid=d.id;
     const el=document.createElement("div"); el.className="story";
     el.innerHTML = `<h4>${esc(s.title)}</h4>
       <p>${esc((s.text||"").slice(0,160))}${(s.text||"").length>160?"…":""}</p>`;
-    /* ✅ 홈 카드도 클릭으로 읽기 */
-    const openStory = () => openModal(s.title, `<div style="white-space:pre-wrap;line-height:1.65">${esc(s.text||"").replace(/\n/g,"<br>")}</div>`);
+    const openStory = () => openModal(
+      s.title,
+      `<div style="white-space:pre-wrap;line-height:1.65">${esc(s.text||"").replace(/\n/g,"<br>")}</div>`,
+      {quizFor:sid, quizTitle:s.title}
+    );
     el.addEventListener("click", openStory);
     box.appendChild(el);
   });
@@ -317,13 +355,11 @@ async function loadSeriesTabs(){
   $("series-tabs").innerHTML=""; $("series-desc").textContent="";
   const tabs=$("series-tabs");
 
-  // 전체 탭
   const all=document.createElement("button");
   all.className="tab"; all.textContent="전체";
   all.onclick=()=>{ currentSeries="ALL"; highlightTabs(); $("series-desc").textContent="모든 시리즈의 책"; loadStories(); };
   tabs.appendChild(all);
 
-  // 시리즈 목록
   const snap=await db.collection("series").orderBy("created","desc").get();
   if(snap.empty){
     $("series-desc").textContent="시리즈가 없습니다.";
@@ -360,7 +396,7 @@ async function loadStories(){
   }
 
   snap.forEach(doc=>{
-    const s=doc.data();
+    const s=doc.data(); const sid=doc.id;
     const el=document.createElement("div"); el.className="story";
     el.innerHTML = `
       <h4>${esc(s.title)}</h4>
@@ -369,17 +405,19 @@ async function loadStories(){
         <button class="btn" data-read>읽기</button>
         ${isAdmin?'<button class="btn" data-edit>수정</button><button class="btn" data-del>삭제</button>':""}
       </div>`;
-    /* ✅ 카드 전체 클릭으로 열기 */
-    const openStory = () => openModal(s.title, `<div style="white-space:pre-wrap;line-height:1.65">${esc(s.text||"").replace(/\n/g,"<br>")}</div>`);
+    const openStory = () => openModal(
+      s.title,
+      `<div style="white-space:pre-wrap;line-height:1.65">${esc(s.text||"").replace(/\n/g,"<br>")}</div>`,
+      {quizFor:sid, quizTitle:s.title}
+    );
     el.addEventListener("click", openStory);
-    /* ✅ 버튼 클릭 시 버블 막아서 카드중복 오픈 방지 */
     el.querySelector("[data-read]").onclick = e => { e.stopPropagation(); openStory(); };
     if(isAdmin){
-      el.querySelector("[data-edit]").onclick = e => { e.stopPropagation(); openEditStory(doc.id,s); };
+      el.querySelector("[data-edit]").onclick = e => { e.stopPropagation(); openEditStory(sid,s); };
       el.querySelector("[data-del]").onclick = async e => {
         e.stopPropagation();
         if(!confirm("삭제할까요?")) return;
-        await db.collection("stories").doc(doc.id).delete();
+        await db.collection("stories").doc(sid).delete();
         toast("삭제됨"); loadStories(); renderAdmin();
       };
     }
@@ -389,7 +427,6 @@ async function loadStories(){
 
 /* ================== NEXT (Proposals) ================== */
 async function loadNext(){
-  // 폼 제출
   $("next-form").onsubmit = async (e)=>{
     e.preventDefault();
     const author=$("nx-author").value.trim();
@@ -429,7 +466,6 @@ async function renderNextList(){
         <button class="btn" data-del>삭제</button>
       </div>`:""}
     `;
-    /* ✅ 카드 클릭으로 읽기 미리보기(제안 본문) */
     const openProposal = () => openModal(p.title, `<div style="white-space:pre-wrap;line-height:1.65">${esc(p.text||"").replace(/\n/g,"<br>")}</div>`);
     el.addEventListener("click", openProposal);
 
@@ -451,7 +487,6 @@ async function renderNextList(){
   });
 }
 async function approveProposal(id,p){
-  // 시리즈 목록 가져와서 선택 모달
   const sSnap=await db.collection("series").orderBy("created","desc").get();
   if(sSnap.empty) return alert("먼저 시리즈를 하나 만들어주세요.");
   const opts=['<option value="">시리즈 선택</option>'];
@@ -525,7 +560,6 @@ async function openGroup(id,g){
     toast("삭제됨"); $("group-box").style.display="none"; loadGroups(); renderAdmin();
   };
 
-  // 글쓰기 핸들러
   const form=$("group-post-form");
   form.onsubmit = async (e)=>{
     e.preventDefault();
@@ -576,7 +610,6 @@ async function loadGroupPosts(groupId){
         `:''}
       </div>
     `;
-    /* 카드 클릭 시 게시글 미리보기 */
     el.addEventListener("click", ()=>openModal(p.title, `<div style="white-space:pre-wrap;line-height:1.65">${esc(p.text||"").replace(/\n/g,"<br>")}</div>`));
     if(isAdmin){
       el.querySelector("[data-pin]").onclick=async(e)=>{
@@ -650,7 +683,7 @@ async function loadAdminSeries(){
         <button class="btn" data-edit>수정</button>
         <button class="btn" data-del>삭제</button>
       </div>`;
-    el.addEventListener("click", ()=>openModal(s.name, `<div class="mut">${esc(s.desc||"설명 없음")}</div>`)); /* 시리즈 카드도 클릭 가능 */
+    el.addEventListener("click", ()=>openModal(s.name, `<div class="mut">${esc(s.desc||"설명 없음")}</div>`));
     el.querySelector("[data-edit]").onclick=(e)=>{e.stopPropagation(); openEditSeries(doc.id,s);};
     el.querySelector("[data-del]").onclick=async(e)=>{
       e.stopPropagation();
@@ -709,7 +742,7 @@ async function loadAdminStories(){
     return;
   }
   snap.forEach(doc=>{
-    const s=doc.data();
+    const s=doc.data(); const sid=doc.id;
     const el=document.createElement("div"); el.className="story";
     el.innerHTML = `<div class="mut">${esc(map[s.seriesId]||"시리즈 미지정")}</div>
       <h4>${esc(s.title)}</h4>
@@ -717,12 +750,16 @@ async function loadAdminStories(){
         <button class="btn" data-edit>수정</button>
         <button class="btn" data-del>삭제</button>
       </div>`;
-    el.addEventListener("click", ()=>openModal(s.title, `<div style="white-space:pre-wrap;line-height:1.65">${esc(s.text||"").replace(/\n/g,"<br>")}</div>`));
-    el.querySelector("[data-edit]").onclick=(e)=>{e.stopPropagation(); openEditStory(doc.id,s);};
+    el.addEventListener("click", ()=>openModal(
+      s.title,
+      `<div style="white-space:pre-wrap;line-height:1.65">${esc(s.text||"").replace(/\n/g,"<br>")}</div>`,
+      {quizFor:sid, quizTitle:s.title}
+    ));
+    el.querySelector("[data-edit]").onclick=(e)=>{e.stopPropagation(); openEditStory(sid,s);};
     el.querySelector("[data-del]").onclick=async(e)=>{
       e.stopPropagation();
       if(!confirm("삭제할까요?")) return;
-      await db.collection("stories").doc(doc.id).delete();
+      await db.collection("stories").doc(sid).delete();
       toast("삭제됨"); loadStories(); renderAdmin();
     };
     box.appendChild(el);
@@ -827,7 +864,7 @@ function openEditPost(id,p){
   };
 }
 
-/* ---- Admin: ‘다음 이야기’ 제안 관리 목록 ---- */
+/* ---- Admin: 제안 관리 ---- */
 async function renderAdminNext(){
   const box=$("admin-next"); if(!box) return; box.innerHTML="";
   const snap=await db.collection("nextProposals").orderBy("created","desc").limit(50).get();
@@ -874,6 +911,110 @@ async function renderAdminNext(){
   });
 }
 
+/* ================== QUIZ + POINTS + LEADERBOARD + PROFILE ================== */
+async function openQuiz(storyId, storyTitle){
+  const qsnap = await db.collection("quizzes").where("storyId","==",storyId).get();
+  if(qsnap.empty) return openModal("퀴즈 없음", "<p>이 책의 퀴즈가 준비되지 않았습니다.</p>");
+  const questions = []; qsnap.forEach(d=>questions.push(d.data()));
+
+  let user = localStorage.getItem("username");
+  if(!user){
+    user = prompt("닉네임을 입력하세요 (포인트 기록용)");
+    if(!user) return;
+    localStorage.setItem("username", user);
+  }
+
+  let html = `<h3>${esc(storyTitle)} 퀴즈</h3>`;
+  questions.forEach((q,i)=>{
+    html += `<div><p><b>Q${i+1}. ${esc(q.question)}</b></p>`;
+    (q.options||[]).forEach((opt,j)=>{
+      html += `<label><input type="radio" name="q${i}" value="${j}"> ${esc(opt)}</label><br>`;
+    });
+    html += "</div><hr>";
+  });
+  html += `<button class="btn pri" id="submitQuiz">제출하기</button>`;
+  openModal("퀴즈", html);
+
+  $("submitQuiz").onclick = async ()=>{
+    let score=0;
+    questions.forEach((q,i)=>{
+      const sel=document.querySelector(`input[name='q${i}']:checked`);
+      if(sel && Number(sel.value)===q.answerIndex) score+=10;
+    });
+    await updateUserPoints(user, storyId, score);
+    openModal("결과", `<p>${esc(user)}님 ${score}점 획득!</p><p>🎉 총 포인트가 업데이트되었습니다.</p>`);
+    renderLeaderboard(); renderLeaderboardHome(); loadProfile();
+  };
+}
+async function updateUserPoints(user, storyId, pts){
+  const snap=await db.collection("points").where("user","==",user).limit(1).get();
+  if(snap.empty){
+    await db.collection("points").add({user, points:pts, quizzesTaken:[storyId]});
+  } else {
+    const doc=snap.docs[0], data=doc.data();
+    if((data.quizzesTaken||[]).includes(storyId)) { toast("이미 이 책 퀴즈를 풀었습니다!"); return; }
+    await db.collection("points").doc(doc.id).update({
+      points:(data.points||0)+pts,
+      quizzesTaken:[...(data.quizzesTaken||[]), storyId]
+    });
+  }
+}
+
+/* Top10 리더보드 (페이지) */
+async function renderLeaderboard(){
+  const box=$("leaderboard-list"); if(!box) return;
+  box.innerHTML="";
+  const snap=await db.collection("points").orderBy("points","desc").limit(10).get();
+  if(snap.empty){ box.innerHTML="<div class='mut'>아직 점수가 없습니다.</div>"; return; }
+  let rank=1;
+  snap.forEach(d=>{
+    const p=d.data();
+    const el=document.createElement("div"); el.className="story";
+    el.innerHTML = `<h4>#${rank++} ${esc(p.user)}</h4><p>${p.points}점</p>`;
+    box.appendChild(el);
+  });
+}
+/* 홈 리더보드 박스 */
+async function renderLeaderboardHome(){
+  const box=$("leaderboard-home"); if(!box) return;
+  box.innerHTML="";
+  const snap=await db.collection("points").orderBy("points","desc").limit(10).get();
+  if(snap.empty){ box.innerHTML="<div class='mut'>아직 점수가 없습니다.</div>"; return; }
+  let rank=1;
+  snap.forEach(d=>{
+    const p=d.data();
+    const el=document.createElement("div"); el.className="story";
+    el.innerHTML = `<h4>#${rank++} ${esc(p.user)}</h4><p>${p.points}점</p>`;
+    box.appendChild(el);
+  });
+}
+
+/* 프로필 */
+$("btnSaveName").onclick = ()=>{
+  const name=$("prof-name").value.trim();
+  if(!name) return toast("닉네임을 입력하세요.");
+  localStorage.setItem("username", name);
+  toast("닉네임 저장됨");
+  loadProfile();
+};
+async function loadProfile(){
+  const box=$("profile-box"); if(!box) return;
+  const user=localStorage.getItem("username");
+  if(user) $("prof-name").value=user;
+  if(!user){ box.innerHTML="<p>닉네임을 저장하고 퀴즈를 풀면 내 포인트가 표시됩니다.</p>"; return; }
+  const snap=await db.collection("points").where("user","==",user).limit(1).get();
+  if(snap.empty){
+    box.innerHTML=`<p><b>${esc(user)}</b> 님, 아직 포인트가 없습니다.</p>`;
+    return;
+  }
+  const data=snap.docs[0].data();
+  box.innerHTML = `
+    <p><b>닉네임:</b> ${esc(user)}</p>
+    <p><b>총 포인트:</b> ${data.points||0}</p>
+    <p><b>참여한 퀴즈 수:</b> ${(data.quizzesTaken||[]).length}</p>
+  `;
+}
+
 /* ================== Helpers ================== */
 async function getSeriesMap(){
   const map={}; const s=await db.collection("series").get(); s.forEach(d=>map[d.id]=d.data().name); return map;
@@ -886,8 +1027,10 @@ window.addEventListener("load",()=>{
   loadSeriesTabs();
   loadNext();
   loadGroups();
+  renderLeaderboardHome();
+  // 프로필 기본 로드(닉네임 있으면 표시)
+  loadProfile();
 });
 </script>
 </body>
 </html>
-
