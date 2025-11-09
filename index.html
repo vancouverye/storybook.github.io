@@ -3,33 +3,59 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>연호의 스토리북 — Fail-safe Final</title>
+<title>연호의 스토리북</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b0f17;--bg2:#0e1421;--glass:#0f1726cc;--solid:#0f1726;--ink:#eaf1fb;--mut:#9fb0c3;--line:#1c2a40;--pri:#6ea3ff;--pri2:#4f7ef3;--pri3:#325de0;--r:16px;--sh:0 22px 55px rgba(0,0,0,.45)}
+:root{
+  --bg:#0a0f18;--bg2:#0d1424;--glass:#0f1726cc;--solid:#0f1726;
+  --line:#1c2a40;--ink:#eaf1fb;--mut:#9fb0c3;--mute:#7d91a7;
+  --pri:#6ea3ff;--pri2:#4f7ef3;--r:16px;--sh:0 22px 55px rgba(0,0,0,.45);
+}
 *{box-sizing:border-box}html,body{height:100%}
-body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;color:var(--ink);
-background:radial-gradient(70% 90% at 10% 0,#14213d 0,transparent 55%),radial-gradient(70% 80% at 100% 0,#12203a 0,transparent 50%),linear-gradient(180deg,#0a0f18 0,#0c1424 45%,#0a0f18 100%)}
+body{
+  margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;color:var(--ink);
+  background:radial-gradient(70% 90% at 10% 0,#14213d 0,transparent 55%),
+             radial-gradient(70% 80% at 100% 0,#12203a 0,transparent 50%),
+             linear-gradient(180deg,#0a0f18 0,#0c1424 45%,#0a0f18 100%);
+}
 .app{display:grid;grid-template-rows:68px 1fr;min-height:100vh}
-.header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;padding:10px 16px;background:#0b1322cc;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.header{
+  position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;padding:10px 16px;
+  background:#0b1322cc;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)
+}
 .brand{font-weight:800}
 .header-nav{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
-.btn{background:linear-gradient(180deg,#111b33,#0d1629);border:1px solid var(--line);color:var(--ink);padding:10px 14px;border-radius:12px;cursor:pointer;transition:.15s;box-shadow:inset 0 -1px 0 rgba(255,255,255,.04)}
-.btn:hover{border-color:#2a3b5e;transform:translateY(-1px)}.btn.pri{background:linear-gradient(180deg,var(--pri),var(--pri2));border-color:transparent;color:#fff}
-.main{padding:22px}.container{max-width:1100px;margin:0 auto;display:grid;gap:18px}
-.card{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:16px}
+.btn{
+  background:linear-gradient(180deg,#111b33,#0d1629);border:1px solid var(--line);color:var(--ink);
+  padding:10px 14px;border-radius:12px;cursor:pointer;transition:.15s;box-shadow:inset 0 -1px 0 rgba(255,255,255,.04)
+}
+.btn:hover{border-color:#2a3b5e;transform:translateY(-1px)}
+.btn.pri{background:linear-gradient(180deg,var(--pri),var(--pri2));border-color:transparent;color:#fff}
+.main{padding:22px}.container{max-width:1200px;margin:0 auto;display:grid;gap:18px}
 .section{display:none}.section.show{display:block}
-.tabs{display:flex;gap:10px;overflow:auto;padding:10px 2px}
-.tab{border:1px solid var(--line);background:#0e1627;color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer;white-space:nowrap}
-.tab.active{border-color:transparent;background:linear-gradient(90deg,var(--pri2),var(--pri3));color:#fff}
-.story{background:linear-gradient(180deg,#0f1a2e,#0f1729);border:1px solid var(--line);border-radius:18px;padding:16px;margin:8px 0}
-.story h4{margin:0}.story p{margin:6px 0;color:var(--mut)}
-.grid{display:grid;gap:16px}.cols-2{grid-template-columns:repeat(2,1fr)}@media(max-width:900px){.cols-2{grid-template-columns:1fr}}
-.spinner{width:42px;height:42px;border:3px solid #1a2840;border-top-color:var(--pri);border-radius:50%;animation:spin 1s linear infinite;margin:20px auto}@keyframes spin{to{transform:rotate(360deg)}}
-.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:300}
-.modal.on{display:flex}.box{width:min(780px,92vw);background:var(--solid);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:16px}
-.toast{position:fixed;right:16px;bottom:16px;background:#0b1322e6;border:1px solid var(--line);padding:10px 14px;border-radius:12px;display:none}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:16px}
+.grid{display:grid;gap:16px}
+.cols-2{grid-template-columns:repeat(2,1fr)}@media(max-width:940px){.cols-2{grid-template-columns:1fr}}
+.tabs{display:flex;gap:10px;overflow:auto;padding:8px 2px}
+.tab{border:1px solid var(--line);background:#0e1627;color:var(--ink);padding:8px 14px;border-radius:999px;white-space:nowrap;cursor:pointer}
+.tab.active{border-color:transparent;background:linear-gradient(90deg,var(--pri),var(--pri2));color:#fff}
+.story{
+  background:linear-gradient(180deg,#0f1a2e,#0f1729);border:1px solid var(--line);
+  border-radius:18px;padding:16px
+}
+.story h4{margin:0}.story p{margin:6px 0;color:var(--mute)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 input,textarea,select{width:100%;background:#0b1422;border:1px solid var(--line);color:var(--ink);padding:11px;border-radius:12px}
+textarea{resize:vertical}
+.spinner{width:44px;height:44px;border:3px solid #1a2840;border-top-color:var(--pri);border-radius:50%;animation:spin 1s linear infinite;margin:20px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;right:16px;bottom:16px;background:#0b1322e6;border:1px solid var(--line);padding:10px 14px;border-radius:12px;display:none;z-index:400}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:350}
+.modal.on{display:flex}
+.modal .box{width:min(780px,92vw);background:var(--solid);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:16px}
+hr{border:none;border-top:1px solid var(--line);margin:12px 0}
+.mut{color:var(--mut)}
+.kbd{border:1px solid var(--line);border-radius:8px;padding:3px 8px;color:var(--mut);font-size:12px}
 </style>
 </head>
 <body>
@@ -39,79 +65,134 @@ input,textarea,select{width:100%;background:#0b1422;border:1px solid var(--line)
     <div class="header-nav">
       <button class="btn" data-page="home">홈</button>
       <button class="btn" data-page="stories">스토리북</button>
+      <button class="btn" data-page="groups">그룹</button>
       <button class="btn pri" data-page="admin">관리자</button>
     </div>
   </div>
 
   <div class="main">
     <div class="container">
+
+      <!-- HOME -->
       <section id="home" class="section show">
         <div class="card">
           <h2>환영합니다 👋</h2>
-          <p>시리즈를 선택하면 해당 책만 보입니다. 관리자에서 시리즈/책을 추가하세요.</p>
+          <p>시리즈 탭을 눌러 원하는 책을 찾아보세요. 그룹은 관리자가 만들고 운영합니다.</p>
+        </div>
+        <div class="card">
+          <h3>최근 책</h3>
+          <div id="home-stories" class="grid cols-2"></div>
         </div>
       </section>
 
+      <!-- STORIES -->
       <section id="stories" class="section">
         <div class="card">
-          <h2>스토리북</h2>
-          <div id="series-tabs" class="tabs"></div>
-          <div id="series-desc" class="mut"></div>
+          <h2>스토리buck</h2>
+          <div id="series-tabs" class="tabs" style="margin-top:6px"></div>
+          <div id="series-desc" class="mut" style="margin:6px 2px 10px"></div>
           <div id="story-list" class="grid cols-2"></div>
           <div id="story-loading" class="spinner" style="display:none"></div>
         </div>
       </section>
 
-      <section id="admin" class="section">
-        <div id="admin-login" class="card">
-          <h3>관리자 로그인</h3>
-          <input id="admin-pass" type="password" placeholder="비밀번호 (admin1234)"/>
-          <button class="btn pri" id="btnAdminLogin">로그인</button>
+      <!-- GROUPS -->
+      <section id="groups" class="section">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <h2>그룹</h2>
+            <span class="mut">관리자가 만든 그룹 안에서 누구나 글을 쓸 수 있어요.</span>
+          </div>
         </div>
-        <div id="admin-panel" class="card" style="display:none">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-            <h3>관리 콘솔</h3>
-            <div class="row" id="admin-actions" style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn pri" id="openSeries">+ 시리즈</button>
-              <button class="btn pri" id="openStory">+ 책</button>
-              <button class="btn" id="editVersion">버전 수정</button>
-              <button class="btn" id="viewVersion">버전 이력 보기</button>
+        <div id="group-list" class="grid cols-2"></div>
+
+        <!-- 그룹 상세/게시판 -->
+        <div id="group-box" class="card" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <div>
+              <h3 id="group-title">그룹</h3>
+              <div id="group-desc" class="mut"></div>
+            </div>
+            <div id="group-admin-actions" style="display:none;gap:8px" class="actions">
+              <button class="btn" id="btnEditGroup">그룹 수정</button>
+              <button class="btn" id="btnDeleteGroup">그룹 삭제</button>
             </div>
           </div>
+          <hr/>
+          <!-- 글쓰기 -->
+          <form id="group-post-form" class="grid" style="margin-bottom:8px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input id="gp-author" class="small" placeholder="작성자 (닉네임)" required style="max-width:260px">
+              <input id="gp-title" class="small" placeholder="제목" required style="flex:1">
+              <button class="btn pri" type="submit" style="white-space:nowrap">글 올리기</button>
+            </div>
+            <textarea id="gp-text" rows="4" placeholder="내용을 입력하세요…" required></textarea>
+            <div class="mut"><span class="kbd">Tip</span> Enter만 누르면 줄바꿈, <span class="kbd">Shift</span> + Enter로도 줄바꿈 됩니다.</div>
+          </form>
+
+          <h4 style="margin-top:10px">게시글</h4>
+          <div id="group-posts" class="grid"></div>
+          <div id="group-posts-loading" class="spinner" style="display:none"></div>
+        </div>
+      </section>
+
+      <!-- ADMIN -->
+      <section id="admin" class="section">
+        <div id="admin-login" class="card">
+          <h2>관리자 로그인</h2>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px">
+            <input id="admin-pass" type="password" placeholder="비밀번호 (admin1234)" class="small" style="max-width:260px">
+            <button class="btn pri" id="btnAdminLogin">로그인</button>
+          </div>
+        </div>
+
+        <div id="admin-panel" class="card" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <h3>관리 콘솔</h3>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn pri" id="openSeries">+ 시리즈</button>
+              <button class="btn pri" id="openStory">+ 책</button>
+              <button class="btn pri" id="openGroup">+ 그룹</button>
+            </div>
+          </div>
+
           <div class="grid cols-2" style="margin-top:12px">
-            <div><h4>시리즈</h4><div id="admin-series"></div></div>
-            <div><h4>책</h4><div id="admin-stories"></div></div>
+            <div>
+              <h4>시리즈</h4>
+              <div id="admin-series"></div>
+            </div>
+            <div>
+              <h4>책</h4>
+              <div id="admin-stories"></div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px">
+            <h4>그룹</h4>
+            <div id="admin-groups"></div>
           </div>
         </div>
       </section>
+
     </div>
   </div>
 </div>
 
-<!-- 공지 배너 / 버전 표시 -->
-<div id="version-box" style="position:fixed;right:14px;bottom:14px;background:rgba(15,23,38,.8);border:1px solid #1c2a40;border-radius:10px;padding:6px 12px;color:#9fb0c3;font-size:13px;backdrop-filter:blur(10px);z-index:200">v0.0.0</div>
-<div id="version-banner" style="position:fixed;top:-80px;left:0;right:0;background:rgba(20,33,60,.95);border-bottom:1px solid #2a3b5e;color:#eaf1fb;text-align:center;padding:12px 20px;backdrop-filter:blur(12px);z-index:300;transition:top .5s ease;">
-  <span id="version-banner-text"></span>
-  <button id="banner-close" style="margin-left:12px;background:none;border:none;color:#9fb0c3;cursor:pointer;font-size:14px">×</button>
-</div>
-
-<div id="modal" class="modal"><div class="box"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3 id="modal-title">Modal</h3><button class="btn" id="modal-close">닫기</button></div><div id="modal-body"></div></div></div>
+<!-- Modal / Toast -->
+<div id="modal" class="modal"><div class="box">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+    <h3 id="modal-title">Modal</h3><button class="btn" id="modal-close">닫기</button>
+  </div>
+  <div id="modal-body"></div>
+</div></div>
 <div id="toast" class="toast"></div>
 
-<!-- Firebase (선택) -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script>
-/* ========= 0) 환경 감지 & 유틸 ========= */
-const $=id=>document.getElementById(id); const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
-const toast=msg=>{const t=$("toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",1700)};
-const show=id=>{$$(".section").forEach(el=>el.classList.remove("show"));$(id).classList.add("show")};
-const esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-$("modal-close").onclick=()=>$("modal").classList.remove("on");
-function openModal(title,html){$("modal-title").textContent=title;$("modal-body").innerHTML=html;$("modal").classList.add("on")}
 
-/* ========= 1) 데이터 계층 (Firestore or localStorage 자동 전환) ========= */
-// 🔑 Firebase 설정(있으면 붙여넣기). 비워두면 자동으로 localStorage 사용.
+<script>
+/* ================== Firebase (필수) ================== */
 const firebaseConfig = {
   apiKey: "AIzaSyBEBA0ZUVcMBG_G9CtauP02kh4Wneg-5gA",
   authDomain: "storybook-4a13b.firebaseapp.com",
@@ -121,231 +202,446 @@ const firebaseConfig = {
   appId: "1:756981563455:web:b0bef64ba3ca2fb39a788a",
   measurementId: "G-CPXLQYTYJY"
 };
-let USE_FIREBASE=false, db=null;
-try{
-  if (firebaseConfig && firebaseConfig.apiKey){
-    firebase.initializeApp(firebaseConfig);
-    db=firebase.firestore();
-    USE_FIREBASE=true;
-    console.log("[DB] Firestore 사용");
-  }else{
-    console.log("[DB] LocalStorage 사용 (firebaseConfig 비어있음)");
-  }
-}catch(e){ console.warn("[DB] Firebase 초기화 실패 → LocalStorage fallback", e); USE_FIREBASE=false; }
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-/* --- LocalStorage 간단 DAO --- */
-const LS={
-  get:(k,def)=>{try{return JSON.parse(localStorage.getItem(k)??JSON.stringify(def))}catch{ return def }},
-  set:(k,v)=>localStorage.setItem(k,JSON.stringify(v)),
-  push:(k,obj)=>{const a=LS.get(k,[]);a.unshift(obj);LS.set(k,a);return obj},
-  uid:()=>Math.random().toString(36).slice(2)+Date.now().toString(36)
-};
+/* ================== 공통 유틸 ================== */
+const ADMIN_PASSWORD = "admin1234";
+let isAdmin=false, currentSeries="ALL", currentGroup=null;
 
-/* --- 통합 API: series / stories / meta.version / versionHistory --- */
-const API={
-  async listSeries(){
-    if(USE_FIREBASE){ const s=await db.collection("series").orderBy("created","desc").get(); return s.docs.map(d=>({id:d.id,...d.data()})); }
-    return LS.get("series",[]);
-  },
-  async addSeries(name,desc){
-    const row={id:LS.uid(),name,desc,created:new Date().toISOString()};
-    if(USE_FIREBASE){ const ref=await db.collection("series").add({name,desc,created:new Date()}); return {id:ref.id,name,desc}; }
-    return LS.push("series",row);
-  },
-  async delSeries(id){
-    if(USE_FIREBASE){ await db.collection("series").doc(id).delete(); return; }
-    LS.set("series", LS.get("series",[]).filter(x=>x.id!==id));
-  },
-  async listStories(seriesId=null){
-    if(USE_FIREBASE){
-      let q=db.collection("stories").orderBy("created","desc");
-      if(seriesId && seriesId!=="ALL") q=q.where("seriesId","==",seriesId);
-      const s=await q.get(); return s.docs.map(d=>({id:d.id,...d.data()}));
-    }
-    let a=LS.get("stories",[]);
-    if(seriesId && seriesId!=="ALL") a=a.filter(x=>x.seriesId===seriesId);
-    return a.sort((a,b)=>new Date(b.created)-new Date(a.created));
-  },
-  async addStory(seriesId,title,text){
-    if(USE_FIREBASE){ await db.collection("stories").add({seriesId,title,text,created:new Date()}); return; }
-    LS.push("stories",{id:LS.uid(),seriesId,title,text,created:new Date().toISOString()});
-  },
-  async delStory(id){
-    if(USE_FIREBASE){ await db.collection("stories").doc(id).delete(); return; }
-    LS.set("stories", LS.get("stories",[]).filter(x=>x.id!==id));
-  },
-  async getVersion(){
-    if(USE_FIREBASE){ const d=await db.collection("meta").doc("version").get(); return d.exists?d.data():null; }
-    return LS.get("meta_version", null);
-  },
-  async setVersion(number,message){
-    const payload={number, message, updated: new Date().toISOString()};
-    if(USE_FIREBASE){ await db.collection("meta").doc("version").set({number,message,updated:new Date()}); }
-    else{ LS.set("meta_version", payload); }
-    // history
-    const hist={id:LS.uid(),version:number,message,changedBy:"관리자",date:new Date().toISOString()};
-    if(USE_FIREBASE){ await db.collection("versionHistory").add({version:number,message,changedBy:"관리자",date:new Date()}); }
-    else{ LS.push("versionHistory", hist); }
-    return payload;
-  },
-  async listVersionHistory(limit=15){
-    if(USE_FIREBASE){
-      const s=await db.collection("versionHistory").orderBy("date","desc").limit(limit).get();
-      return s.docs.map(d=>({id:d.id,...d.data()}));
-    }
-    return LS.get("versionHistory",[]).slice(0,limit);
-  }
-};
+const $ = id => document.getElementById(id);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+function show(id){ $$(".section").forEach(el=>el.classList.remove("show")); $(id).classList.add("show"); }
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.style.display="block"; setTimeout(()=>t.style.display="none",1600); }
+function openModal(title,body){ $("modal-title").textContent=title; $("modal-body").innerHTML=body; $("modal").classList.add("on"); }
+$("modal-close").onclick = () => $("modal").classList.remove("on");
 
-/* ========= 2) 전역 상태 ========= */
-const ADMIN_PASSWORD="admin1234";
-let isAdmin=false, currentSeries="ALL";
+/* ================== 네비 ================== */
+$$("[data-page]").forEach(b => b.addEventListener("click", () => {
+  show(b.dataset.page);
+  if (b.dataset.page==="home") loadHome();
+  if (b.dataset.page==="stories") loadSeriesTabs();
+  if (b.dataset.page==="groups") loadGroups();
+  if (b.dataset.page==="admin" && isAdmin) renderAdmin();
+}));
 
-/* ========= 3) 네비 ========= */
-$$("[data-page]").forEach(b=>b.onclick=()=>{ show(b.dataset.page); if(b.dataset.page==="stories") initStories(); if(b.dataset.page==="admin"&&isAdmin) renderAdmin(); });
+/* ================== HOME ================== */
+async function loadHome(){
+  const box=$("home-stories"); box.innerHTML="";
+  const snap=await db.collection("stories").orderBy("created","desc").limit(6).get();
+  if(snap.empty){ box.innerHTML='<div class="mut">아직 책이 없습니다.</div>'; return; }
+  snap.forEach(d=>{
+    const s=d.data();
+    const el=document.createElement("div"); el.className="story";
+    el.innerHTML = `<h4>${esc(s.title)}</h4>
+      <p>${esc((s.text||"").slice(0,160))}${(s.text||"").length>160?"…":""}</p>`;
+    box.appendChild(el);
+  });
+}
 
-/* ========= 4) STORIES (시리즈 탭 + 필터) ========= */
-async function initStories(){
-  $("series-tabs").innerHTML="";
+/* ================== STORIES ================== */
+async function loadSeriesTabs(){
+  $("series-tabs").innerHTML=""; $("series-desc").textContent="";
   const tabs=$("series-tabs");
+
+  // 전체 탭
   const all=document.createElement("button");
   all.className="tab"; all.textContent="전체";
-  all.onclick=()=>{currentSeries="ALL"; highlightTabs(); renderStories(); $("series-desc").textContent="모든 시리즈의 책";}
+  all.onclick=()=>{ currentSeries="ALL"; highlightTabs(); $("series-desc").textContent="모든 시리즈의 책"; loadStories(); };
   tabs.appendChild(all);
 
-  const series=await API.listSeries();
-  if(series.length===0){ $("series-desc").textContent="시리즈가 없습니다. 관리자에서 추가하세요."; $("story-list").innerHTML=""; return; }
-  series.forEach(s=>{
-    const b=document.createElement("button");
-    b.className="tab"; b.textContent=s.name; b.dataset.sid=s.id;
-    b.onclick=()=>{ currentSeries=s.id; highlightTabs(); $("series-desc").textContent=s.desc||""; renderStories(); };
-    tabs.appendChild(b);
-  });
-
-  currentSeries="ALL"; highlightTabs(); $("series-desc").textContent="모든 시리즈의 책"; renderStories();
+  // 시리즈 목록
+  const snap=await db.collection("series").orderBy("created","desc").get();
+  if(snap.empty){
+    $("series-desc").textContent="시리즈가 없습니다. 관리자에서 추가하세요.";
+  }else{
+    snap.forEach(doc=>{
+      const s=doc.data();
+      const b=document.createElement("button");
+      b.className="tab"; b.textContent=s.name; b.dataset.sid=doc.id;
+      b.onclick=()=>{ currentSeries=doc.id; highlightTabs(); $("series-desc").textContent=s.desc||""; loadStories(); };
+      tabs.appendChild(b);
+    });
+  }
+  currentSeries="ALL"; highlightTabs(); $("series-desc").textContent="모든 시리즈의 책"; loadStories();
 }
-function highlightTabs(){ $$(".tab").forEach(t=>t.classList.toggle("active", (currentSeries==="ALL"&&t.textContent==="전체") || t.dataset.sid===currentSeries)); }
-async function renderStories(){
-  $("story-list").innerHTML=""; $("story-loading").style.display="block";
-  const list=await API.listStories(currentSeries);
+function highlightTabs(){
+  $$(".tab").forEach(t=>{
+    const active = (currentSeries==="ALL" && t.textContent==="전체") || (t.dataset.sid===currentSeries);
+    t.classList.toggle("active", active);
+  });
+}
+async function loadStories(){
+  const list=$("story-list"); list.innerHTML="";
+  $("story-loading").style.display="block";
+
+  let q = db.collection("stories").orderBy("created","desc");
+  if(currentSeries && currentSeries!=="ALL") q = q.where("seriesId","==",currentSeries);
+
+  const snap = await q.get();
   $("story-loading").style.display="none";
-  if(list.length===0){ $("story-list").innerHTML='<div class="story"><p>이 시리즈에는 아직 책이 없습니다.</p></div>'; return; }
-  list.forEach(s=>{
+
+  if(snap.empty){ list.innerHTML='<div class="mut">이 시리즈에는 책이 없습니다.</div>'; return; }
+
+  snap.forEach(doc=>{
+    const s=doc.data();
     const el=document.createElement("div"); el.className="story";
-    el.innerHTML=`<h4>${esc(s.title)}</h4><p>${esc((s.text||"").slice(0,220))}${(s.text||"").length>220?"…":""}</p>
-    <div class="actions">${isAdmin?`<button class="btn" data-del="${s.id}">삭제</button>`:""}</div>`;
-    if(isAdmin) el.querySelector("[data-del]").onclick=async()=>{ if(!confirm("삭제할까요?"))return; await API.delStory(s.id); toast("삭제됨"); renderStories(); renderAdmin(); };
-    $("story-list").appendChild(el);
+    el.innerHTML = `
+      <h4>${esc(s.title)}</h4>
+      <p>${esc((s.text||"").slice(0,220)).replace(/\n/g,"<br>")}${(s.text||"").length>220?"…":""}</p>
+      <div class="actions">
+        <button class="btn" data-read>읽기</button>
+        ${isAdmin?'<button class="btn" data-edit>수정</button><button class="btn" data-del>삭제</button>':""}
+      </div>`;
+    el.querySelector("[data-read]").onclick=()=>openModal(s.title, `<div style="white-space:pre-wrap;line-height:1.65">${esc(s.text||"").replace(/\n/g,"<br>")}</div>`);
+    if(isAdmin){
+      el.querySelector("[data-edit]").onclick=()=>openEditStory(doc.id,s);
+      el.querySelector("[data-del]").onclick=async()=>{
+        if(!confirm("삭제할까요?")) return;
+        await db.collection("stories").doc(doc.id).delete();
+        toast("삭제됨"); loadStories(); renderAdmin();
+      };
+    }
+    list.appendChild(el);
   });
 }
 
-/* ========= 5) ADMIN ========= */
+/* ================== GROUPS (목록 & 상세) ================== */
+async function loadGroups(){
+  const list=$("group-list"); list.innerHTML="";
+  $("group-box").style.display="none";
+  const snap=await db.collection("groups").orderBy("created","desc").get();
+  if(snap.empty){ list.innerHTML='<div class="mut">아직 그룹이 없습니다.</div>'; return; }
+
+  snap.forEach(doc=>{
+    const g=doc.data();
+    const el=document.createElement("div"); el.className="story";
+    el.innerHTML = `
+      <h4>${esc(g.name)}</h4>
+      <p>${esc(g.desc||"")}</p>
+      <div class="actions">
+        <button class="btn pri" data-open>들어가기</button>
+        ${isAdmin?'<button class="btn" data-edit>수정</button><button class="btn" data-del>삭제</button>':""}
+      </div>`;
+    el.querySelector("[data-open]").onclick=()=>openGroup(doc.id,g);
+    if(isAdmin){
+      el.querySelector("[data-edit]").onclick=()=>openEditGroup(doc.id,g);
+      el.querySelector("[data-del]").onclick=async()=>{
+        if(!confirm("그룹을 삭제할까요?")) return;
+        await db.collection("groups").doc(doc.id).delete();
+        toast("삭제됨"); loadGroups(); renderAdmin();
+      };
+    }
+    list.appendChild(el);
+  });
+}
+
+async function openGroup(id,g){
+  currentGroup={id,...g};
+  $("group-box").style.display="block";
+  $("group-title").textContent = g.name;
+  $("group-desc").textContent = g.desc || "";
+  $("group-admin-actions").style.display = isAdmin ? "flex" : "none";
+  $("btnEditGroup").onclick = ()=>openEditGroup(id,g);
+  $("btnDeleteGroup").onclick = async ()=>{
+    if(!confirm("그룹을 삭제할까요?")) return;
+    await db.collection("groups").doc(id).delete();
+    toast("삭제됨"); $("group-box").style.display="none"; loadGroups(); renderAdmin();
+  };
+
+  // 글쓰기 핸들러
+  const form=$("group-post-form");
+  form.onsubmit = async (e)=>{
+    e.preventDefault();
+    const author=$("gp-author").value.trim();
+    const title=$("gp-title").value.trim();
+    const text=$("gp-text").value.trim();
+    if(!author||!title||!text) return;
+    await db.collection("groupPosts").add({groupId:id, author, title, text, pinned:false, created:new Date()});
+    $("gp-text").value=""; $("gp-title").value="";
+    toast("등록되었습니다!");
+    loadGroupPosts(id);
+  };
+
+  loadGroupPosts(id);
+}
+
+async function loadGroupPosts(groupId){
+  $("group-posts").innerHTML="";
+  $("group-posts-loading").style.display="block";
+
+  // 최신순으로 가져온 뒤 클라이언트에서 pinned 먼저 정렬
+  const snap=await db.collection("groupPosts")
+    .where("groupId","==",groupId)
+    .orderBy("created","desc")
+    .limit(50)
+    .get();
+
+  $("group-posts-loading").style.display="none";
+  if(snap.empty){ $("group-posts").innerHTML='<div class="mut">아직 게시글이 없습니다.</div>'; return; }
+
+  const posts=[];
+  snap.forEach(d=>posts.push({id:d.id,...d.data()}));
+  posts.sort((a,b)=>((b.pinned?1:0)-(a.pinned?1:0)) || (b.created?.toMillis?.()||new Date(b.created).getTime()) - (a.created?.toMillis?.()||new Date(a.created).getTime()));
+
+  posts.forEach(p=>{
+    const el=document.createElement("div"); el.className="story";
+    el.innerHTML=`
+      <div class="mut">${p.pinned?'📌 고정됨':''}</div>
+      <h4>${esc(p.title)}</h4>
+      <p>${esc(p.text).replace(/\n/g,"<br>")}</p>
+      <div class="mut">${esc(p.author||"익명")} • ${formatDate(p.created)}</div>
+      <div class="actions">
+        ${isAdmin?`
+          <button class="btn" data-pin>${p.pinned?'고정 해제':'고정'}</button>
+          <button class="btn" data-edit>수정</button>
+          <button class="btn" data-del>삭제</button>
+        `:''}
+      </div>
+    `;
+    if(isAdmin){
+      el.querySelector("[data-pin]").onclick=async()=>{
+        await db.collection("groupPosts").doc(p.id).update({pinned:!p.pinned});
+        loadGroupPosts(groupId);
+      };
+      el.querySelector("[data-edit]").onclick=()=>openEditPost(p.id,p);
+      el.querySelector("[data-del]").onclick=async()=>{
+        if(!confirm("게시글을 삭제할까요?")) return;
+        await db.collection("groupPosts").doc(p.id).delete();
+        toast("삭제됨"); loadGroupPosts(groupId);
+      };
+    }
+    $("group-posts").appendChild(el);
+  });
+}
+function formatDate(ts){
+  try{
+    if(typeof ts?.toDate==="function") return ts.toDate().toLocaleString();
+    const d = new Date(ts);
+    if(!isNaN(d)) return d.toLocaleString();
+  }catch(e){}
+  return "";
+}
+
+/* ================== ADMIN ================== */
 $("btnAdminLogin").onclick=()=>{
   if($("admin-pass").value===ADMIN_PASSWORD){
-    isAdmin=true; $("admin-login").style.display="none"; $("admin-panel").style.display="block"; toast("관리자 모드");
+    isAdmin=true;
+    $("admin-login").style.display="none";
+    $("admin-panel").style.display="block";
+    toast("관리자 로그인 완료");
     renderAdmin();
-  } else alert("비밀번호가 틀렸습니다.");
+  }else alert("비밀번호가 틀렸습니다.");
 };
+function renderAdmin(){ loadAdminSeries(); loadAdminStories(); loadAdminGroups(); }
+
+/* ---- 시리즈 CRUD ---- */
 $("openSeries").onclick=()=>{
-  openModal("시리즈 추가", `<form id="fSeries" class="grid"><input id="se-name" placeholder="시리즈 이름" required><input id="se-desc" placeholder="설명(선택)"><div style="display:flex;justify-content:flex-end"><button class="btn pri">추가</button></div></form>`);
-  $("fSeries").onsubmit=async e=>{e.preventDefault(); const name=$("se-name").value.trim(), desc=$("se-desc").value.trim(); if(!name)return; await API.addSeries(name,desc); toast("시리즈 추가됨"); $("modal").classList.remove("on"); initStories(); renderAdmin(); };
-};
-$("openStory").onclick=async()=>{
-  const series=await API.listSeries(); if(series.length===0) return alert("시리즈를 먼저 추가하세요.");
-  openModal("책 추가", `<form id="fStory" class="grid">
-    <select id="st-series" required>${series.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("")}</select>
-    <input id="st-title" placeholder="책 제목" required>
-    <textarea id="st-text" rows="6" placeholder="본문 (선택)"></textarea>
-    <div style="display:flex;justify-content:flex-end"><button class="btn pri">추가</button></div></form>`);
-  $("fStory").onsubmit=async e=>{e.preventDefault();const sid=$("st-series").value,t=$("st-title").value.trim(),txt=$("st-text").value; if(!sid||!t)return; await API.addStory(sid,t,txt); toast("책 추가됨"); $("modal").classList.remove("on"); renderStories(); renderAdmin(); };
-};
-
-async function renderAdmin(){
-  const sBox=$("admin-series"), tBox=$("admin-stories"); sBox.innerHTML=""; tBox.innerHTML="";
-  (await API.listSeries()).forEach(s=>{
-    const el=document.createElement("div"); el.className="story";
-    el.innerHTML=`<h4>${esc(s.name)}</h4><p>${esc(s.desc||"")}</p><div class="actions"><button class="btn" data-del>삭제</button></div>`;
-    el.querySelector("[data-del]").onclick=async()=>{ if(!confirm("시리즈 삭제? (이미 등록된 책은 남습니다/로컬)"))return; await API.delSeries(s.id); toast("시리즈 삭제됨"); initStories(); renderAdmin(); };
-    sBox.appendChild(el);
-  });
-  (await API.listStories("ALL")).forEach(st=>{
-    const el=document.createElement("div"); el.className="story";
-    el.innerHTML=`<h4>${esc(st.title)}</h4><div class="mut">${esc(st.seriesId)}</div>`;
-    tBox.appendChild(el);
-  });
-}
-
-/* ========= 6) Version System (표시 + 자동증가 + 배너 + 이력) ========= */
-function incrementVersion(v){const p=(v||"v0.0.0").replace(/[^\d.]/g,"").split(".").map(n=>parseInt(n)||0);while(p.length<3)p.push(0);p[2]++; if(p[2]>=10){p[2]=0;p[1]++;} if(p[1]>=10){p[1]=0;p[0]++;} return `v${p.join(".")}`;}
-
-async function loadVersionUI(){
-  const cur=await API.getVersion();
-  if(cur){ $("version-box").textContent = cur.number || "v0.0.0"; $("version-box").title="업데이트: "+(cur.updated?new Date(cur.updated).toLocaleString():""); versionBanner(cur); }
-  else{ $("version-box").textContent="v0.0.0"; }
-}
-function versionBanner(v){
-  const current=v.number||"v0.0.0";
-  const last=localStorage.getItem("lastVersion");
-  if(last!==current){
-    const msg=v.message||"새로운 업데이트가 적용되었습니다!";
-    $("version-banner-text").textContent = `${current} — ${msg}`;
-    $("version-banner").style.top="0";
-    $("banner-close").onclick=()=>{ $("version-banner").style.top="-80px"; localStorage.setItem("lastVersion",current); };
-  }
-}
-$("editVersion").onclick=()=>{
-  openModal("버전 수정", `<form id="fVer" class="grid">
-    <input id="v-num" placeholder="예: v1.2.0" required>
-    <textarea id="v-msg" rows="3" placeholder="공지 메시지 (예: UI 개선 및 버그 수정)"></textarea>
-    <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button class="btn" type="button" id="inc">자동 증가</button>
-      <button class="btn pri">저장</button>
-    </div></form>`);
-  // 현재값 세팅
-  API.getVersion().then(v=>{ if(v){$("v-num").value=v.number||""; $("v-msg").value=v.message||"";} });
-  $("inc").onclick=()=>{$("v-num").value=incrementVersion($("v-num").value||"v0.0.0");};
-  $("fVer").onsubmit=async e=>{
+  openModal("시리즈 추가", `
+    <form id="formSeries" class="grid">
+      <input id="se-name" placeholder="시리즈 이름" required>
+      <input id="se-desc" placeholder="설명 (선택)">
+      <div style="display:flex;justify-content:flex-end"><button class="btn pri" type="submit">추가</button></div>
+    </form>
+  `);
+  $("formSeries").onsubmit=async e=>{
     e.preventDefault();
-    const num=$("v-num").value.trim(); const msg=$("v-msg").value.trim()||"새로운 업데이트가 적용되었습니다!";
-    if(!num) return;
-    await API.setVersion(num,msg);
-    localStorage.setItem("lastVersion", num);
-    toast("버전 업데이트 완료");
-    $("modal").classList.remove("on");
-    loadVersionUI();
+    const name=$("se-name").value.trim(), desc=$("se-desc").value.trim();
+    if(!name) return;
+    await db.collection("series").add({name,desc,created:new Date()});
+    toast("시리즈 추가됨"); $("modal").classList.remove("on"); loadSeriesTabs(); renderAdmin();
   };
 };
-$("viewVersion").onclick=async()=>{
-  const list=await API.listVersionHistory(15);
-  if(list.length===0) return openModal("버전 이력", `<div class="card">이력이 없습니다.</div>`);
-  const html=list.map(v=>`<div class="story"><h4>${esc(v.version)}</h4><p>${esc(v.message||"")}</p><div class="mut">${new Date(v.date??v.updated??Date.now()).toLocaleString()}</div></div>`).join("");
-  openModal("버전 이력", `<div class="grid">${html}</div>`);
+
+async function loadAdminSeries(){
+  const box=$("admin-series"); box.innerHTML="";
+  const snap=await db.collection("series").orderBy("created","desc").get();
+  if(snap.empty){ box.innerHTML='<div class="mut">시리즈가 없습니다.</div>'; return; }
+  snap.forEach(doc=>{
+    const s=doc.data();
+    const el=document.createElement("div"); el.className="story";
+    el.innerHTML = `<h4>${esc(s.name)}</h4><p>${esc(s.desc||"")}</p>
+      <div class="actions">
+        <button class="btn" data-edit>수정</button>
+        <button class="btn" data-del>삭제</button>
+      </div>`;
+    el.querySelector("[data-edit]").onclick=()=>openEditSeries(doc.id,s);
+    el.querySelector("[data-del]").onclick=async()=>{
+      if(!confirm("시리즈 삭제? (책은 남습니다)")) return;
+      await db.collection("series").doc(doc.id).delete();
+      toast("삭제됨"); loadSeriesTabs(); renderAdmin();
+    };
+    box.appendChild(el);
+  });
+}
+function openEditSeries(id,s){
+  openModal("시리즈 수정", `
+    <form id="formSeriesEdit" class="grid">
+      <input id="se-name-e" value="${esc(s.name)}" required>
+      <input id="se-desc-e" value="${esc(s.desc||"")}">
+      <div style="display:flex;justify-content:flex-end"><button class="btn pri" type="submit">저장</button></div>
+    </form>
+  `);
+  $("formSeriesEdit").onsubmit=async e=>{
+    e.preventDefault();
+    const name=$("se-name-e").value.trim(); const desc=$("se-desc-e").value.trim();
+    if(!name) return;
+    await db.collection("series").doc(id).update({name,desc});
+    toast("수정됨"); $("modal").classList.remove("on"); loadSeriesTabs(); renderAdmin();
+  };
+}
+
+/* ---- 책 CRUD ---- */
+$("openStory").onclick=async()=>{
+  const snap=await db.collection("series").orderBy("created","desc").get();
+  if(snap.empty) return alert("시리즈를 먼저 만들어주세요.");
+  const opts = ['<option value="">(시리즈 선택)</option>'];
+  snap.forEach(d=>opts.push(`<option value="${d.id}">${esc(d.data().name)}</option>`));
+  openModal("책 추가", `
+    <form id="formStory" class="grid">
+      <select id="st-series" required>${opts.join("")}</select>
+      <input id="st-title" placeholder="책 제목" required>
+      <textarea id="st-text" rows="6" placeholder="본문 (선택)"></textarea>
+      <div style="display:flex;justify-content:flex-end"><button class="btn pri" type="submit">추가</button></div>
+    </form>
+  `);
+  $("formStory").onsubmit=async e=>{
+    e.preventDefault();
+    const seriesId=$("st-series").value; const title=$("st-title").value.trim(); const text=$("st-text").value;
+    if(!seriesId || !title) return;
+    await db.collection("stories").add({seriesId,title,text,created:new Date()});
+    toast("책 추가됨"); $("modal").classList.remove("on"); loadStories(); renderAdmin();
+  };
 };
 
-/* ========= 7) 부팅 ========= */
-window.addEventListener("load", async ()=>{
+async function loadAdminStories(){
+  const box=$("admin-stories"); box.innerHTML="";
+  const map=await getSeriesMap();
+  const snap=await db.collection("stories").orderBy("created","desc").get();
+  if(snap.empty){ box.innerHTML='<div class="mut">책이 없습니다.</div>'; return; }
+  snap.forEach(doc=>{
+    const s=doc.data();
+    const el=document.createElement("div"); el.className="story";
+    el.innerHTML = `<div class="mut">${esc(map[s.seriesId]||"시리즈 미지정")}</div>
+      <h4>${esc(s.title)}</h4>
+      <div class="actions">
+        <button class="btn" data-edit>수정</button>
+        <button class="btn" data-del>삭제</button>
+      </div>`;
+    el.querySelector("[data-edit]").onclick=()=>openEditStory(doc.id,s);
+    el.querySelector("[data-del]").onclick=async()=>{
+      if(!confirm("삭제할까요?")) return;
+      await db.collection("stories").doc(doc.id).delete();
+      toast("삭제됨"); loadStories(); renderAdmin();
+    };
+    box.appendChild(el);
+  });
+}
+function openEditStory(id,s){
+  openModal("책 수정", `
+    <form id="formStoryEdit" class="grid">
+      <input id="ed-title" value="${esc(s.title||"")}" required>
+      <textarea id="ed-text" rows="6">${esc(s.text||"")}</textarea>
+      <div style="display:flex;justify-content:flex-end"><button class="btn pri" type="submit">저장</button></div>
+    </form>
+  `);
+  $("formStoryEdit").onsubmit=async e=>{
+    e.preventDefault();
+    const title=$("ed-title").value.trim(); const text=$("ed-text").value;
+    if(!title) return;
+    await db.collection("stories").doc(id).update({title,text});
+    toast("수정됨"); $("modal").classList.remove("on"); loadStories(); renderAdmin();
+  };
+}
+
+/* ---- 그룹 CRUD ---- */
+$("openGroup").onclick=()=>{
+  openModal("그룹 추가", `
+    <form id="formGroup" class="grid">
+      <input id="gp-name" placeholder="그룹 이름" required>
+      <input id="gp-desc" placeholder="설명 (선택)">
+      <div style="display:flex;justify-content:flex-end"><button class="btn pri" type="submit">추가</button></div>
+    </form>
+  `);
+  $("formGroup").onsubmit=async e=>{
+    e.preventDefault();
+    const name=$("gp-name").value.trim(); const desc=$("gp-desc").value.trim();
+    if(!name) return;
+    await db.collection("groups").add({name,desc,created:new Date()});
+    toast("그룹 추가됨"); $("modal").classList.remove("on"); loadGroups(); renderAdmin();
+  };
+};
+
+async function loadAdminGroups(){
+  const box=$("admin-groups"); box.innerHTML="";
+  const snap=await db.collection("groups").orderBy("created","desc").get();
+  if(snap.empty){ box.innerHTML='<div class="mut">그룹이 없습니다.</div>'; return; }
+  snap.forEach(doc=>{
+    const g=doc.data();
+    const el=document.createElement("div"); el.className="story";
+    el.innerHTML = `<h4>${esc(g.name)}</h4><p>${esc(g.desc||"")}</p>
+      <div class="actions">
+        <button class="btn" data-edit>수정</button>
+        <button class="btn" data-del>삭제</button>
+      </div>`;
+    el.querySelector("[data-edit]").onclick=()=>openEditGroup(doc.id,g);
+    el.querySelector("[data-del]").onclick=async()=>{
+      if(!confirm("그룹 삭제?")) return;
+      await db.collection("groups").doc(doc.id).delete();
+      toast("삭제됨"); loadGroups(); renderAdmin();
+    };
+    box.appendChild(el);
+  });
+}
+function openEditGroup(id,g){
+  openModal("그룹 수정", `
+    <form id="formGroupEdit" class="grid">
+      <input id="gp-name-e" value="${esc(g.name||"")}" required>
+      <input id="gp-desc-e" value="${esc(g.desc||"")}">
+      <div style="display:flex;justify-content:flex-end"><button class="btn pri" type="submit">저장</button></div>
+    </form>
+  `);
+  $("formGroupEdit").onsubmit=async e=>{
+    e.preventDefault();
+    const name=$("gp-name-e").value.trim(); const desc=$("gp-desc-e").value.trim();
+    if(!name) return;
+    await db.collection("groups").doc(id).update({name,desc});
+    toast("수정됨"); $("modal").classList.remove("on"); loadGroups(); renderAdmin();
+  };
+}
+
+/* ---- 게시글 수정 모달 ---- */
+function openEditPost(id,p){
+  openModal("게시글 수정", `
+    <form id="formPostEdit" class="grid">
+      <input id="pe-title" value="${esc(p.title||"")}" required>
+      <textarea id="pe-text" rows="6">${esc(p.text||"")}</textarea>
+      <label style="display:flex;gap:8px;align-items:center">
+        <input id="pe-pin" type="checkbox" ${p.pinned?'checked':''} style="width:auto">
+        <span>상단 고정</span>
+      </label>
+      <div style="display:flex;justify-content:flex-end"><button class="btn pri" type="submit">저장</button></div>
+    </form>
+  `);
+  $("formPostEdit").onsubmit=async e=>{
+    e.preventDefault();
+    const title=$("pe-title").value.trim(); const text=$("pe-text").value; const pinned=$("pe-pin").checked;
+    if(!title) return;
+    await db.collection("groupPosts").doc(id).update({title,text,pinned});
+    toast("수정됨"); $("modal").classList.remove("on"); loadGroupPosts(currentGroup.id);
+  };
+}
+
+/* ================== Helpers ================== */
+async function getSeriesMap(){ const map={}; const s=await db.collection("series").get(); s.forEach(d=>map[d.id]=d.data().name); return map; }
+
+/* ================== Init ================== */
+window.addEventListener("load",()=>{
   show("home");
-  await initStories();
-  await loadVersionUI();
-
-  // GitHub Pages 새로고침 시에도 최신 버전 반영
-  if (performance && performance.getEntriesByType && performance.getEntriesByType("navigation")[0]?.type==="reload"){
-    await loadVersionUI();
-  }
-
-  // 데모용 기본 데이터(로컬) 주입: 비어있을 때만
-  if(!USE_FIREBASE){
-    if(API && (await API.listSeries()).length===0){
-      await API.addSeries("연호의 모험", "우리의 첫 번째 시리즈");
-      const s2=await API.addSeries("바다의 비밀", "깊은 바다로 떠나는 여행");
-      const series=(await API.listSeries());
-      await API.addStory(series[0].id,"첫 만남","숲 속에서 새로운 친구를 만났다…");
-      await API.addStory(series[0].id,"도전","우리는 함께 도전에 나섰다…");
-      await API.addStory(s2.id,"바다 입문","파도가 반짝인다…");
-    }
-    if(!(await API.getVersion())) await API.setVersion("v1.0.0","초기 배포");
-    await initStories(); await loadVersionUI();
-  }
+  loadHome();
+  loadSeriesTabs();
+  loadGroups();
 });
 </script>
 </body>
