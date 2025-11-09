@@ -44,8 +44,7 @@
     .tab.active{border-color:transparent;background:linear-gradient(90deg,var(--pri),var(--pri2));color:#fff}
     .story{
       background:linear-gradient(180deg,#0f1a2e,#0f1729);border:1px solid var(--line);
-      border-radius:18px;padding:16px;
-      cursor:pointer;transition:transform .15s;
+      border-radius:18px;padding:16px;cursor:pointer;transition:transform .15s
     }
     .story:hover{transform:translateY(-2px);background:#101a2f}
     .story h4{margin:0}.story p{margin:6px 0;color:var(--mute)}
@@ -59,7 +58,7 @@
     .modal.on{display:flex}
     .modal .box{
       width:min(780px,92vw);
-      max-height:90vh; overflow-y:auto;  /* 긴 본문도 보기 OK */
+      max-height:90vh; overflow-y:auto;  /* 긴 본문 스크롤 */
       background:var(--solid);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:16px
     }
     hr{border:none;border-top:1px solid var(--line);margin:12px 0}
@@ -89,8 +88,8 @@
       <button class="btn" data-page="stories">스토리북</button>
       <button class="btn" data-page="next">책 만들기</button>
       <button class="btn" data-page="groups">그룹</button>
-      <button class="btn" data-page="leaderboard">리더보드</button><!-- ✅ 추가 -->
-      <button class="btn" data-page="profile">프로필</button><!-- ✅ 추가 -->
+      <button class="btn" data-page="leaderboard">리더보드</button>
+      <button class="btn" data-page="profile">프로필</button>
       <button class="btn pri" data-page="admin">관리자</button>
     </div>
   </div>
@@ -103,7 +102,7 @@
       <section id="home" class="section show">
         <div class="card">
           <h2>환영합니다 👋</h2>
-          <p>그룹에 들어가 스포일러를 읽으실수 있어요. ‘책 만들기’에서 누구나 새로운 이야기를 제안할 수 있어요.</p>
+          <p>그룹에 들어가 스포일러를 읽으실 수 있어요. ‘책 만들기’에서 누구나 새로운 이야기를 제안할 수 있어요.</p>
         </div>
         <div class="card">
           <h3>최근 책</h3>
@@ -118,7 +117,7 @@
       <!-- STORIES -->
       <section id="stories" class="section">
         <div class="card">
-          <h2>스토리북</h2>
+          <h2>스토리бук</h2>
           <div id="series-tabs" class="tabs" style="margin-top:6px"></div>
           <div id="series-desc" class="mut" style="margin:6px 2px 10px"></div>
           <div id="story-list" class="grid cols-2"></div>
@@ -193,7 +192,7 @@
         </div>
       </section>
 
-      <!-- LEADERBOARD (Top 10) -->
+      <!-- LEADERBOARD -->
       <section id="leaderboard" class="section">
         <div class="card">
           <h2>🏆 리더보드 Top 10</h2>
@@ -231,6 +230,7 @@
               <button class="btn pri" id="openSeries">+ 시리즈</button>
               <button class="btn pri" id="openStory">+ 책</button>
               <button class="btn pri" id="openGroup">+ 그룹</button>
+              <button class="btn pri" id="openQuizAdmin">+ 퀴즈</button><!-- ✅ 관리자 퀴즈 추가 버튼 -->
             </div>
           </div>
 
@@ -254,6 +254,11 @@
             <h4>‘책 만들기’ 제안 관리</h4>
             <div id="admin-next"></div>
           </div>
+
+          <div style="margin-top:14px">
+            <h4>퀴즈 관리</h4>
+            <div id="admin-quizzes"></div>
+          </div>
         </div>
       </section>
 
@@ -267,7 +272,7 @@
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
       <h3 id="modal-title">Modal</h3>
       <div style="display:flex;gap:8px">
-        <button class="btn" id="modal-quiz" style="display:none">퀴즈 풀기</button><!-- ✅ 동적 표시 -->
+        <button class="btn" id="modal-quiz" style="display:none">퀴즈 풀기</button>
         <button class="btn" id="modal-close">닫기</button>
       </div>
     </div>
@@ -281,7 +286,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-/* ================== Firebase (필수: config 붙이기) ================== */
+/* ================== Firebase ================== */
 const firebaseConfig = {
   apiKey: "AIzaSyBEBA0ZUVcMBG_G9CtauP02kh4Wneg-5gA",
   authDomain: "storybook-4a13b.firebaseapp.com",
@@ -304,7 +309,7 @@ const esc = s => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").repl
 function show(id){ $$(".section").forEach(el=>el.classList.remove("show")); $(id).classList.add("show"); }
 function toast(msg){ const t=$("toast"); t.textContent=msg; t.style.display="block"; setTimeout(()=>t.style.display="none",1600); }
 
-/* 모달 유틸(퀴즈 버튼 제어 포함) */
+/* 모달 (퀴즈 버튼 제어 포함) */
 function openModal(title,body,{quizFor=null,quizTitle=""}={}){
   $("modal-title").textContent=title;
   $("modal-body").innerHTML=body;
@@ -515,13 +520,13 @@ async function approveProposal(id,p){
   };
 }
 
-/* ================== GROUPS (목록 & 상세 + 게시판) ================== */
+/* ================== GROUPS ================== */
 async function loadGroups(){
   const list=$("group-list"); list.innerHTML="";
   $("group-box").style.display="none";
   const snap=await db.collection("groups").orderBy("created","desc").get();
   if(snap.empty){
-    list.innerHTML='<div class="mut">아직 그룹이 없습니다。</div>';
+    list.innerHTML='<div class="mut">아직 그룹이 없습니다.</div>';
     return;
   }
   snap.forEach(doc=>{
@@ -637,7 +642,7 @@ function getMs(ts){
 }
 function formatDate(ts){ const ms=getMs(ts); return ms?new Date(ms).toLocaleString():""; }
 
-/* ================== ADMIN ================== */
+/* ================== ADMIN 진입 ================== */
 $("btnAdminLogin").onclick=()=>{
   if($("admin-pass").value===ADMIN_PASSWORD){
     isAdmin=true;
@@ -648,7 +653,7 @@ $("btnAdminLogin").onclick=()=>{
   }else alert("비밀번호가 틀렸습니다.");
 };
 function renderAdmin(){
-  loadAdminSeries(); loadAdminStories(); loadAdminGroups(); renderAdminNext();
+  loadAdminSeries(); loadAdminStories(); loadAdminGroups(); renderAdminNext(); renderAdminQuizzes(); /* ✅ 퀴즈 렌더 */
 }
 
 /* ---- 시리즈 CRUD ---- */
@@ -960,7 +965,7 @@ async function updateUserPoints(user, storyId, pts){
   }
 }
 
-/* Top10 리더보드 (페이지) */
+/* 리더보드(페이지/홈) */
 async function renderLeaderboard(){
   const box=$("leaderboard-list"); if(!box) return;
   box.innerHTML="";
@@ -974,7 +979,6 @@ async function renderLeaderboard(){
     box.appendChild(el);
   });
 }
-/* 홈 리더보드 박스 */
 async function renderLeaderboardHome(){
   const box=$("leaderboard-home"); if(!box) return;
   box.innerHTML="";
@@ -1015,9 +1019,100 @@ async function loadProfile(){
   `;
 }
 
-/* ================== Helpers ================== */
+/* ================== ADMIN: QUIZ 관리 ================== */
+$("openQuizAdmin").onclick = async () => {
+  const storySnap = await db.collection("stories").orderBy("created", "desc").get();
+  if (storySnap.empty) return alert("먼저 책을 하나 만들어주세요.");
+
+  const opts = ['<option value="">(책 선택)</option>'];
+  storySnap.forEach(d => opts.push(`<option value="${d.id}">${esc(d.data().title)}</option>`));
+
+  openModal("퀴즈 추가", `
+    <form id="formQuiz" class="grid">
+      <select id="qz-story" required>${opts.join("")}</select>
+      <input id="qz-question" placeholder="문제 내용" required>
+      <textarea id="qz-options" rows="3" placeholder="보기 (쉼표로 구분)" required></textarea>
+      <input id="qz-answer" type="number" placeholder="정답 인덱스 (0부터 시작)" required>
+      <div style="display:flex;justify-content:flex-end"><button class="btn pri" type="submit">등록</button></div>
+    </form>
+  `);
+
+  $("formQuiz").onsubmit = async e => {
+    e.preventDefault();
+    const storyId = $("qz-story").value;
+    const question = $("qz-question").value.trim();
+    const options = $("qz-options").value.split(",").map(x => x.trim()).filter(Boolean);
+    const answerIndex = parseInt($("qz-answer").value);
+    if (!storyId || !question || options.length < 2 || isNaN(answerIndex)) return alert("모든 항목을 올바르게 입력하세요.");
+
+    await db.collection("quizzes").add({ storyId, question, options, answerIndex });
+    toast("퀴즈 추가됨");
+    $("modal").classList.remove("on");
+    renderAdminQuizzes();
+  };
+};
+
+async function renderAdminQuizzes() {
+  const box = $("admin-quizzes"); if (!box) return;
+  box.innerHTML = "";
+  const snap = await db.collection("quizzes").orderBy("storyId", "asc").get();
+  if (snap.empty) {
+    box.innerHTML = "<div class='mut'>등록된 퀴즈가 없습니다.</div>";
+    return;
+  }
+  const storyMap = await getStoryMap();
+  snap.forEach(doc => {
+    const q = doc.data();
+    const el = document.createElement("div");
+    el.className = "story";
+    el.innerHTML = `
+      <div class="mut">${esc(storyMap[q.storyId] || "알 수 없는 책")}</div>
+      <h4>${esc(q.question)}</h4>
+      <p>보기: ${q.options.map((o,i)=>`${i}:${esc(o)}`).join(", ")}</p>
+      <p>정답 인덱스: ${q.answerIndex}</p>
+      <div class="actions">
+        <button class="btn" data-edit>수정</button>
+        <button class="btn" data-del>삭제</button>
+      </div>
+    `;
+    el.querySelector("[data-edit]").onclick = () => openEditQuiz(doc.id, q);
+    el.querySelector("[data-del]").onclick = async () => {
+      if (!confirm("이 퀴즈를 삭제할까요?")) return;
+      await db.collection("quizzes").doc(doc.id).delete();
+      toast("삭제됨");
+      renderAdminQuizzes();
+    };
+    box.appendChild(el);
+  });
+}
+function openEditQuiz(id, q) {
+  openModal("퀴즈 수정", `
+    <form id="formQuizEdit" class="grid">
+      <input id="qz-question-e" value="${esc(q.question)}" required>
+      <textarea id="qz-options-e" rows="3" required>${esc(q.options.join(", "))}</textarea>
+      <input id="qz-answer-e" type="number" value="${q.answerIndex}" required>
+      <div style="display:flex;justify-content:flex-end"><button class="btn pri" type="submit">저장</button></div>
+    </form>
+  `);
+  $("formQuizEdit").onsubmit = async e => {
+    e.preventDefault();
+    const question = $("qz-question-e").value.trim();
+    const options = $("qz-options-e").value.split(",").map(x => x.trim()).filter(Boolean);
+    const answerIndex = parseInt($("qz-answer-e").value);
+    if (!question || options.length < 2 || isNaN(answerIndex)) return alert("모든 항목을 올바르게 입력하세요.");
+    await db.collection("quizzes").doc(id).update({ question, options, answerIndex });
+    toast("수정 완료");
+    $("modal").classList.remove("on");
+    renderAdminQuizzes();
+  };
+}
+
+/* Helpers */
 async function getSeriesMap(){
   const map={}; const s=await db.collection("series").get(); s.forEach(d=>map[d.id]=d.data().name); return map;
+}
+async function getStoryMap(){
+  const map={}; const s=await db.collection("stories").get(); s.forEach(d=>map[d.id]=d.data().title); return map;
 }
 
 /* ================== Init ================== */
@@ -1028,7 +1123,6 @@ window.addEventListener("load",()=>{
   loadNext();
   loadGroups();
   renderLeaderboardHome();
-  // 프로필 기본 로드(닉네임 있으면 표시)
   loadProfile();
 });
 </script>
