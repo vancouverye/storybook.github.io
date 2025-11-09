@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>연호의 스토리북</title>
+  <title>연스- No.1 스토리북 플랫폼</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -66,7 +66,7 @@
 <div class="app">
   <!-- Header -->
   <div class="header">
-    <div class="brand">📚 연호의 스토리북</div>
+    <div class="brand">📚 연스- No.1 스토리북 플랫폼</div>
     <div class="header-nav">
       <button class="btn" data-page="home">홈</button>
       <button class="btn" data-page="stories">스토리북</button>
@@ -133,7 +133,7 @@
         <div class="card">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
             <h2>그룹</h2>
-            <span class="mut">관리자가 만든 그룹 안에서 누구나 글을 쓸 수 있어요.</span>
+            <span class="mut">그룹 안에서 누구나 글을 쓸 수 있어요.</span>
           </div>
         </div>
         <div id="group-list" class="grid cols-2"></div>
@@ -175,7 +175,7 @@
         <div id="admin-login" class="card">
           <h2>관리자 로그인</h2>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px">
-            <input id="admin-pass" type="password" placeholder="비밀번호 (admin1234)" class="small" style="max-width:260px">
+            <input id="admin-pass" type="password" placeholder="비밀번호" class="small" style="max-width:260px">
             <button class="btn pri" id="btnAdminLogin">로그인</button>
           </div>
         </div>
@@ -236,16 +236,19 @@
 <script>
 /* ================== Firebase (필수: config 붙이기) ================== */
 const firebaseConfig = {
-  // 🔑 여기에 네 Firebase Web App 설정을 그대로 붙여넣기
-  // apiKey: "xxx",
-  // authDomain: "xxx.firebaseapp.com",
-  // projectId: "xxx",
+  apiKey: "AIzaSyBEBA0ZUVcMBG_G9CtauP02kh4Wneg-5gA",
+  authDomain: "storybook-4a13b.firebaseapp.com",
+  projectId: "storybook-4a13b",
+  storageBucket: "storybook-4a13b.firebasestorage.app",
+  messagingSenderId: "756981563455",
+  appId: "1:756981563455:web:b0bef64ba3ca2fb39a788a",
+  measurementId: "G-CPXLQYTYJY"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 /* ================== 공통 유틸 ================== */
-const ADMIN_PASSWORD = "admin1234";
+const ADMIN_PASSWORD = "admin5848";
 let isAdmin=false, currentSeries="ALL", currentGroup=null;
 
 const $ = id => document.getElementById(id);
@@ -297,7 +300,7 @@ async function loadSeriesTabs(){
   // 시리즈 목록
   const snap=await db.collection("series").orderBy("created","desc").get();
   if(snap.empty){
-    $("series-desc").textContent="시리즈가 없습니다. 관리자에서 추가하세요.";
+    $("series-desc").textContent="시리즈가 없습니다.";
   }else{
     snap.forEach(doc=>{
       const s=doc.data();
@@ -835,3 +838,4 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
