@@ -55,7 +55,17 @@
     .toast{position:fixed;right:16px;bottom:16px;background:#0b1322e6;border:1px solid var(--line);padding:10px 14px;border-radius:12px;display:none;z-index:400}
     .modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:350}
     .modal.on{display:flex}
-    .modal .box{width:min(780px,92vw);background:var(--solid);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:16px}
+    .modal .box {
+  width:min(780px,92vw);
+  max-height:90vh;             /* ✅ 세로 길이 제한 */
+  overflow-y:auto;             /* ✅ 내부 스크롤 가능 */
+  background:var(--solid);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:var(--sh);
+  padding:16px;
+}
+
     hr{border:none;border-top:1px solid var(--line);margin:12px 0}
     .mut{color:var(--mut)}
     .kbd{border:1px solid var(--line);border-radius:8px;padding:3px 8px;color:var(--mut);font-size:12px}
@@ -838,6 +848,7 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
+
 
 
 
