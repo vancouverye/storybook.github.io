@@ -3,9 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>연호의 스토리북 — Premium</title>
+<title>연호의 스토리북 — Premium (Series Edit)</title>
 <style>
-/* ===== THEME ===== */
 :root{
   --bg:#0b0f17; --bg2:#0e1421;
   --card:#0f1726cc; --card-solid:#101a2b;
@@ -27,7 +26,6 @@ body{
 a{color:inherit;text-decoration:none}
 hr{border:none;border-top:1px solid var(--line);margin:16px 0}
 
-/* ===== LAYOUT ===== */
 .app{display:grid;grid-template-rows:64px 1fr;min-height:100vh}
 .header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;padding:10px 16px;
   background:#0c141fbf; border-bottom:1px solid var(--line); backdrop-filter:blur(10px)}
@@ -52,14 +50,12 @@ hr{border:none;border-top:1px solid var(--line);margin:16px 0}
 .empty{color:var(--mut)}
 .title{margin:.2em 0 .6em}
 
-/* ===== TABS ===== */
 .tabs{display:flex;gap:10px;overflow:auto;padding:8px 2px;scroll-snap-type:x mandatory}
 .tab{scroll-snap-align:start;border:1px solid var(--line);background:#0c1628;color:var(--ink);
   padding:9px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;transition:all .12s}
 .tab:hover{border-color:#2b3a52}
 .tab.active{border-color:var(--pri);box-shadow:0 0 0 2px color-mix(in srgb,var(--pri),transparent 70%) inset}
 
-/* ===== STORY CARD ===== */
 .story{background:#0f1a2e;border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:10px;position:relative;overflow:hidden}
 .story h4{margin:0}
 .story p{margin:0;color:var(--mut)}
@@ -68,7 +64,6 @@ hr{border:none;border-top:1px solid var(--line);margin:16px 0}
 .story::after{content:"";position:absolute;inset:auto -40px -40px auto;width:160px;height:160px;border-radius:50%;
 background:radial-gradient(closest-side, #2a3f66 0, transparent 65%);opacity:.18;pointer-events:none}
 
-/* ===== MODAL / TOAST / SPINNER ===== */
 .modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:100}
 .modal.on{display:flex}
 .modal .box{width:min(760px,92vw);background:var(--card-solid);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px}
@@ -79,17 +74,14 @@ background:radial-gradient(closest-side, #2a3f66 0, transparent 65%);opacity:.18
 .spinner{width:42px;height:42px;border:3px solid #1a2840;border-top-color:var(--pri);border-radius:50%;animation:spin 1s linear infinite;margin:20px auto}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ===== FORM ===== */
 input,textarea,select{width:100%;background:#0b1422;border:1px solid var(--line);color:var(--ink);padding:11px;border-radius:12px}
 textarea{resize:vertical}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .small{max-width:280px}
-
 </style>
 </head>
 <body>
 <div class="app">
-  <!-- Header -->
   <div class="header">
     <div class="brand">📚 연호의 스토리북</div>
     <span class="badge" id="role">읽기 전용</span>
@@ -102,7 +94,6 @@ textarea{resize:vertical}
     </div>
   </div>
 
-  <!-- Main -->
   <div class="main">
     <div class="container">
 
@@ -182,7 +173,7 @@ textarea{resize:vertical}
             <input id="admin-pass" type="password" class="small" placeholder="비밀번호">
             <button class="btn pri" id="btnAdminLogin">로그인</button>
           </form>
-          <p class="empty">로그인 후 “관리 콘솔” 버튼이 나타납니다.</p>
+          <p class="empty">로그인 후 “관리 콘솔”이 나타납니다.</p>
         </div>
 
         <div id="admin-panel" class="card" style="display:none">
@@ -221,9 +212,9 @@ textarea{resize:vertical}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-/* ================= Firebase ================= */
-// 🔑 여기에 네 firebaseConfig 전체를 그대로 붙여넣기
-const firebaseConfig = {
+/* ============ Firebase ============ */
+// 🔑 여기에 네 firebaseConfig 전체를
+  const firebaseConfig = {
   apiKey: "AIzaSyBEBA0ZUVcMBG_G9CtauP02kh4Wneg-5gA",
   authDomain: "storybook-4a13b.firebaseapp.com",
   projectId: "storybook-4a13b",
@@ -235,8 +226,8 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* ================= State & Utils ================= */
-const ADMIN_PASSWORD = "admin1234"; // 필요 시 변경
+/* ============ State & Utils ============ */
+const ADMIN_PASSWORD = "admin1234";
 let isAdmin=false, currentSeries=null, currentGroup=null;
 
 const $=id=>document.getElementById(id);
@@ -246,8 +237,9 @@ function toast(msg){const t=$("toast");t.textContent=msg;t.style.display="block"
 function openModal(title,inner){$("modal-title").textContent=title;$("modal-body").innerHTML=inner;$("modal").classList.add("on")}
 function closeModal(){ $("modal").classList.remove("on") }
 $("modal-close").onclick=closeModal;
+const esc = (s)=>String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
 
-// NAV
+/* NAV */
 $$("[data-page]").forEach(b=>b.addEventListener("click",()=>{ show(b.dataset.page);
   if(b.dataset.page==="home") loadHome();
   if(b.dataset.page==="stories") loadSeriesTabs();
@@ -256,7 +248,7 @@ $$("[data-page]").forEach(b=>b.addEventListener("click",()=>{ show(b.dataset.pag
   if(b.dataset.page==="admin" && isAdmin) renderAdmin();
 }));
 
-/* ================= HOME ================= */
+/* ============ HOME ============ */
 async function loadHome(){
   const box=$("home-stories"); box.innerHTML="";
   const snap=await db.collection("stories").orderBy("created","desc").limit(6).get();
@@ -264,8 +256,8 @@ async function loadHome(){
   snap.forEach(d=>{
     const s=d.data();
     const c=document.createElement("div"); c.className="story";
-    c.innerHTML=`<h4>${s.title}</h4>
-      <p>${(s.text||"").slice(0,120)}${(s.text||"").length>120?"…":""}</p>
+    c.innerHTML=`<h4>${esc(s.title)}</h4>
+      <p>${esc((s.text||"").slice(0,120))}${(s.text||"").length>120?"…":""}</p>
       <div class="meta">${new Date(s.created?.toDate?.()||Date.now()).toLocaleString()}</div>
       <div class="actions"><button class="btn" data-read>읽기</button></div>`;
     c.querySelector("[data-read]").onclick=()=>openBookModal(s.title,s.text);
@@ -273,7 +265,7 @@ async function loadHome(){
   });
 }
 
-/* ================= STORIES (Series Tabs) ================= */
+/* ============ STORIES (Series Tabs) ============ */
 async function loadSeriesTabs(){
   $("series-tabs").innerHTML=""; $("series-desc").textContent=""; $("story-list").innerHTML="";
   $("story-loading").style.display="block";
@@ -285,7 +277,10 @@ async function loadSeriesTabs(){
   tabs.appendChild(all);
 
   const snap=await db.collection("series").orderBy("created","desc").get();
-  if(snap.empty){ $("series-desc").textContent="시리즈가 없습니다. 관리자에서 시리즈를 추가하세요."; $("story-loading").style.display="none"; return; }
+  if(snap.empty){
+    $("series-desc").textContent="시리즈가 없습니다. 관리자에서 시리즈를 추가하세요.";
+    $("story-loading").style.display="none"; return;
+  }
 
   snap.forEach(doc=>{
     const s=doc.data(); const b=document.createElement("button");
@@ -294,6 +289,7 @@ async function loadSeriesTabs(){
     tabs.appendChild(b);
   });
 
+  // 기본: 전체 보기
   currentSeries=null; highlightTabs(); $("series-desc").textContent="전체 시리즈의 책"; await loadStories();
 }
 function highlightTabs(){ $$(".tab").forEach(t=>t.classList.toggle("active", (!currentSeries && t.textContent==="전체") || t.dataset.sid===currentSeries)) }
@@ -301,14 +297,14 @@ function highlightTabs(){ $$(".tab").forEach(t=>t.classList.toggle("active", (!c
 async function loadStories(){
   const list=$("story-list"); list.innerHTML="";
   let q=db.collection("stories").orderBy("created","desc");
-  if(currentSeries) q=q.where("seriesId","==",currentSeries);
+  if(currentSeries){ q=q.where("seriesId","==",currentSeries); }
   const snap=await q.get(); $("story-loading").style.display="none";
   if(snap.empty){ list.innerHTML='<div class="empty">표시할 책이 없습니다.</div>'; return; }
   snap.forEach(doc=>{
     const s=doc.data();
     const el=document.createElement("div"); el.className="story";
-    el.innerHTML=`<h4>${s.title}</h4>
-      <p>${(s.text||"").slice(0,220).replace(/\n/g,"<br>")}${(s.text||"").length>220?"…":""}</p>
+    el.innerHTML=`<h4>${esc(s.title)}</h4>
+      <p>${esc((s.text||"").slice(0,220)).replace(/\n/g,"<br>")}${(s.text||"").length>220?"…":""}</p>
       <div class="actions">
         <button class="btn" data-read>읽기</button>
         ${isAdmin?'<button class="btn" data-edit>수정</button><button class="btn" data-del>삭제</button>':''}
@@ -316,27 +312,29 @@ async function loadStories(){
     el.querySelector("[data-read]").onclick=()=>openBookModal(s.title,s.text);
     if(isAdmin){
       el.querySelector("[data-edit]").onclick=()=>openEditStoryModal(doc.id,s);
-      el.querySelector("[data-del]").onclick=async()=>{ if(!confirm("삭제할까요?"))return; await db.collection("stories").doc(doc.id).delete(); toast("삭제됨"); loadStories(); renderAdmin(); };
+      el.querySelector("[data-del]").onclick=async()=>{ if(!confirm("삭제할까요?"))return;
+        await db.collection("stories").doc(doc.id).delete(); toast("삭제됨"); loadStories(); renderAdmin(); };
     }
     list.appendChild(el);
   });
 }
-function openBookModal(title,text){ openModal(title||"책", `<div style="white-space:pre-wrap;line-height:1.6">${(text||"").replace(/</g,"&lt;")}</div>`) }
+function openBookModal(title,text){ openModal(esc(title||"책"), `<div style="white-space:pre-wrap;line-height:1.6">${esc(text||"").replace(/\n/g,"<br>")}</div>`) }
 
-/* ================= GROUPS ================= */
+/* ============ GROUPS ============ */
 async function loadGroups(){
   const list=$("group-list"); list.innerHTML="";
   const snap=await db.collection("groups").orderBy("created","desc").get();
   if(snap.empty){ list.innerHTML='<div class="empty">아직 그룹이 없습니다.</div>'; $("group-box").style.display="none"; return; }
   snap.forEach(doc=>{
     const g=doc.data(); const c=document.createElement("div"); c.className="story";
-    c.innerHTML=`<h4>${g.name}</h4><p>${g.desc||""}</p>
+    c.innerHTML=`<h4>${esc(g.name)}</h4><p>${esc(g.desc||"")}</p>
       <div class="actions">
         <button class="btn pri" data-open>들어가기</button>
         ${isAdmin?'<button class="btn" data-del>삭제</button>':""}
       </div>`;
     c.querySelector("[data-open]").onclick=()=>openGroup(doc.id,g);
-    if(isAdmin) c.querySelector("[data-del]").onclick=async()=>{ if(!confirm("그룹 삭제? (게시글은 남습니다)"))return; await db.collection("groups").doc(doc.id).delete(); toast("삭제됨"); loadGroups(); renderAdmin(); };
+    if(isAdmin) c.querySelector("[data-del]").onclick=async()=>{ if(!confirm("그룹 삭제? (게시글은 남습니다)"))return;
+      await db.collection("groups").doc(doc.id).delete(); toast("삭제됨"); loadGroups(); renderAdmin(); };
     list.appendChild(c);
   });
 }
@@ -355,13 +353,13 @@ async function loadGroupPosts(){
   const box=$("group-posts"); box.innerHTML="";
   const snap=await db.collection("groupPosts").where("groupId","==",currentGroup.id).orderBy("created","desc").get();
   if(snap.empty){box.innerHTML='<div class="empty">아직 글이 없습니다.</div>';return}
-  snap.forEach(d=>{ const x=d.data(); const el=document.createElement("div"); el.className="story"; el.innerHTML=`<h4>${x.name}</h4><p>${x.text.replace(/\n/g,"<br>")}</p>`; box.appendChild(el) });
+  snap.forEach(d=>{ const x=d.data(); const el=document.createElement("div"); el.className="story"; el.innerHTML=`<h4>${esc(x.name)}</h4><p>${esc(x.text).replace(/\n/g,"<br>")}</p>`; box.appendChild(el) });
 }
 
-/* ================= NEXT (SUGGESTIONS) ================= */
+/* ============ NEXT (SUGGESTIONS) ============ */
 async function loadSeriesSelects(){
   const sel=$("sg-series"); const snap=await db.collection("series").orderBy("created","desc").get();
-  const html=['<option value="">(시리즈 선택)</option>']; snap.forEach(d=>html.push(`<option value="${d.id}">${d.data().name}</option>`));
+  const html=['<option value="">(시리즈 선택)</option>']; snap.forEach(d=>html.push(`<option value="${d.id}">${esc(d.data().name)}</option>`));
   sel.innerHTML=html.join("");
 }
 $("suggest-form").addEventListener("submit", async e=>{
@@ -378,19 +376,19 @@ async function loadSuggestions(){
   const snap=await db.collection("suggestions").orderBy("created","desc").get();
   if(snap.empty){box.innerHTML='<div class="empty">아직 제안이 없습니다.</div>';return}
   snap.forEach(doc=>{ const d=doc.data(); const el=document.createElement("div"); el.className="story";
-    el.innerHTML=`<div class="meta">${map[d.seriesId]||"시리즈"}</div><h4>${d.name}</h4><p>${d.text.replace(/\n/g,"<br>")}</p>`; box.appendChild(el) });
+    el.innerHTML=`<div class="meta">${esc(map[d.seriesId]||"시리즈")}</div><h4>${esc(d.name)}</h4><p>${esc(d.text).replace(/\n/g,"<br>")}</p>`; box.appendChild(el) });
 }
 async function getSeriesMap(){ const map={}; const snap=await db.collection("series").get(); snap.forEach(s=>map[s.id]=s.data().name); return map; }
 
-/* ================= ADMIN ================= */
+/* ============ ADMIN ============ */
 $("btnAdminLogin").onclick=()=>{
   const v=$("admin-pass").value;
   if(v===ADMIN_PASSWORD){ isAdmin=true; $("role").textContent="관리자"; $("admin-login").style.display="none"; $("admin-panel").style.display="block"; toast("관리자 모드"); renderAdmin(); }
   else alert("비밀번호가 틀렸습니다.");
 };
-
 function renderAdmin(){ loadAdminSeries(); loadAdminStories(); }
 
+/* 시리즈 추가 */
 $("openSeries").onclick=()=>openModal("시리즈 추가", `
   <form id="formSeries" class="grid">
     <input id="se-name" placeholder="시리즈 이름" required>
@@ -408,6 +406,7 @@ document.addEventListener("submit", async (e)=>{
   }
 });
 
+/* 책 추가 */
 $("openStory").onclick=async()=>{
   const opts=await buildSeriesOptions();
   openModal("책 추가", `
@@ -430,6 +429,7 @@ document.addEventListener("submit", async (e)=>{
   }
 });
 
+/* 제안 승인 모달 */
 $("openApprove").onclick=async()=>{
   const map=await getSeriesMap();
   const snap=await db.collection("suggestions").orderBy("created","desc").get();
@@ -437,15 +437,15 @@ $("openApprove").onclick=async()=>{
   if(snap.empty) html='<div class="empty">승인 대기 제안이 없습니다.</div>';
   snap.forEach(doc=>{
     const d=doc.data();
-    html+=`<div class="story"><div class="meta">${map[d.seriesId]||"시리즈"}</div><h4>${d.name}</h4><p>${d.text.replace(/\n/g,"<br>")}</p>
+    html+=`<div class="story"><div class="meta">${esc(map[d.seriesId]||"시리즈")}</div><h4>${esc(d.name)}</h4><p>${esc(d.text).replace(/\n/g,"<br>")}</p>
       <div class="actions"><button class="btn pri" data-approve="${doc.id}">책으로 등록</button><button class="btn" data-del="${doc.id}">삭제</button></div></div>`;
   });
   openModal("제안 승인", html || '<div class="empty">없음</div>');
-  // wire actions
   $$("[data-approve]").forEach(btn=>btn.onclick=()=>approveSuggestion(btn.getAttribute("data-approve")));
   $$("[data-del]").forEach(btn=>btn.onclick=()=>removeSuggestion(btn.getAttribute("data-del")));
 };
 
+/* 그룹 추가 */
 $("openGroup").onclick=()=>openModal("그룹 추가", `
   <form id="formGroup" class="grid">
     <input id="gr-name" placeholder="그룹 이름" required>
@@ -463,18 +463,47 @@ document.addEventListener("submit", async (e)=>{
   }
 });
 
+/* Admin lists - 시리즈(수정 추가) */
 async function loadAdminSeries(){
   const box=$("admin-series"); box.innerHTML="";
   const snap=await db.collection("series").orderBy("created","desc").get();
   if(snap.empty){ box.innerHTML='<div class="empty">시리즈가 없습니다.</div>'; return; }
   snap.forEach(doc=>{
     const s=doc.data(); const el=document.createElement("div"); el.className="story";
-    el.innerHTML=`<h4>${s.name}</h4><p>${s.desc||""}</p>
-      <div class="actions"><button class="btn" data-del>삭제</button></div>`;
-    el.querySelector("[data-del]").onclick=async()=>{ if(!confirm("삭제할까요? (책은 남습니다)"))return; await db.collection("series").doc(doc.id).delete(); toast("삭제됨"); loadAdminSeries(); loadSeriesTabs(); loadSeriesSelects(); };
+    el.innerHTML=`<h4>${esc(s.name)}</h4><p>${esc(s.desc||"")}</p>
+      <div class="actions">
+        <button class="btn" data-edit>수정</button>
+        <button class="btn" data-del>삭제</button>
+      </div>`;
+    // 수정 버튼 → 시리즈 수정 모달
+    el.querySelector("[data-edit]").onclick=()=>{
+      openModal("시리즈 수정", `
+        <form id="formSeriesEdit" class="grid">
+          <input id="edit-name" value="${esc(s.name)}" required>
+          <input id="edit-desc" value="${esc(s.desc||"")}">
+          <div class="row" style="justify-content:flex-end"><button class="btn pri" type="submit">저장</button></div>
+        </form>
+      `);
+      document.getElementById("formSeriesEdit").addEventListener("submit", async e=>{
+        e.preventDefault();
+        const name=document.getElementById("edit-name").value.trim();
+        const desc=document.getElementById("edit-desc").value.trim();
+        if(!name) return;
+        await db.collection("series").doc(doc.id).update({name,desc});
+        toast("시리즈 수정 완료"); closeModal(); loadAdminSeries(); loadSeriesTabs(); loadSeriesSelects();
+      }, {once:true});
+    };
+    // 삭제 버튼
+    el.querySelector("[data-del]").onclick=async()=>{
+      if(!confirm("시리즈를 삭제할까요? (이미 등록된 책은 남습니다)")) return;
+      await db.collection("series").doc(doc.id).delete();
+      toast("시리즈 삭제됨"); loadAdminSeries(); loadSeriesTabs(); loadSeriesSelects();
+    };
     box.appendChild(el);
   });
 }
+
+/* Admin lists - 책 */
 async function loadAdminStories(){
   const box=$("admin-stories"); box.innerHTML="";
   const map=await getSeriesMap();
@@ -482,18 +511,19 @@ async function loadAdminStories(){
   if(snap.empty){ box.innerHTML='<div class="empty">책이 없습니다.</div>'; return; }
   snap.forEach(doc=>{
     const s=doc.data(); const el=document.createElement("div"); el.className="story";
-    el.innerHTML=`<div class="meta">${map[s.seriesId]||"시리즈"}</div><h4>${s.title}</h4>
+    el.innerHTML=`<div class="meta">${esc(map[s.seriesId]||"시리즈 미지정")}</div><h4>${esc(s.title)}</h4>
       <div class="actions"><button class="btn" data-edit>수정</button><button class="btn" data-del>삭제</button></div>`;
     el.querySelector("[data-edit]").onclick=()=>openEditStoryModal(doc.id,s);
     el.querySelector("[data-del]").onclick=async()=>{ if(!confirm("삭제할까요?"))return; await db.collection("stories").doc(doc.id).delete(); toast("삭제됨"); loadAdminStories(); loadStories(); };
     box.appendChild(el);
   });
 }
+
 function openEditStoryModal(id,s){
   openModal("책 수정", `
     <form id="formStoryEdit" class="grid">
-      <input id="ed-title" value="${(s.title||'').replace(/"/g,'&quot;')}" required>
-      <textarea id="ed-text" rows="6">${(s.text||'').replace(/</g,'&lt;')}</textarea>
+      <input id="ed-title" value="${esc(s.title||'')}" required>
+      <textarea id="ed-text" rows="6">${esc(s.text||'')}</textarea>
       <div class="row" style="justify-content:flex-end"><button class="btn pri" type="submit">저장</button></div>
     </form>
   `);
@@ -507,12 +537,13 @@ function openEditStoryModal(id,s){
   }, {once:true});
 }
 
+/* Approve / Remove suggestion */
 async function approveSuggestion(id){
   const doc=await db.collection("suggestions").doc(id).get(); if(!doc.exists) return;
   const d=doc.data();
   openModal("책 등록", `
     <form id="formApprove" class="grid">
-      <div class="empty">시리즈: ${ (await getSeriesMap())[d.seriesId] || "알 수 없음" }</div>
+      <div class="meta">시리즈: ${esc((await getSeriesMap())[d.seriesId] || "알 수 없음")}</div>
       <input id="ap-title" placeholder="책 제목" required>
       <div class="row" style="justify-content:flex-end"><button class="btn pri" type="submit">등록</button></div>
     </form>
@@ -531,7 +562,11 @@ async function removeSuggestion(id){
 }
 
 /* Helpers */
-async function buildSeriesOptions(){ const snap=await db.collection("series").orderBy("created","desc").get(); const arr=[]; snap.forEach(s=>arr.push(`<option value="${s.id}">${s.data().name}</option>`)); return arr.join("") }
+async function buildSeriesOptions(){
+  const snap=await db.collection("series").orderBy("created","desc").get();
+  const arr=[]; snap.forEach(s=>arr.push(`<option value="${s.id}">${esc(s.data().name)}</option>`));
+  return arr.join("");
+}
 
 /* INIT */
 show("home"); loadHome();
