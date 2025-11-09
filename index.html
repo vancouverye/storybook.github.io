@@ -44,8 +44,11 @@
     .tab.active{border-color:transparent;background:linear-gradient(90deg,var(--pri),var(--pri2));color:#fff}
     .story{
       background:linear-gradient(180deg,#0f1a2e,#0f1729);border:1px solid var(--line);
-      border-radius:18px;padding:16px
+      border-radius:18px;padding:16px;
+      cursor:pointer; /* ✅ 카드 전체 클릭 가능 */
+      transition:transform .15s;
     }
+    .story:hover{transform:translateY(-2px);background:#101a2f}
     .story h4{margin:0}.story p{margin:6px 0;color:var(--mute)}
     .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
     input,textarea,select{width:100%;background:#0b1422;border:1px solid var(--line);color:var(--ink);padding:11px;border-radius:12px}
@@ -55,21 +58,31 @@
     .toast{position:fixed;right:16px;bottom:16px;background:#0b1322e6;border:1px solid var(--line);padding:10px 14px;border-radius:12px;display:none;z-index:400}
     .modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:350}
     .modal.on{display:flex}
-    .modal .box {
-  width:min(780px,92vw);
-  max-height:90vh;             /* ✅ 세로 길이 제한 */
-  overflow-y:auto;             /* ✅ 내부 스크롤 가능 */
-  background:var(--solid);
-  border:1px solid var(--line);
-  border-radius:18px;
-  box-shadow:var(--sh);
-  padding:16px;
-}
-
+    .modal .box{
+      width:min(780px,92vw);
+      max-height:90vh;         /* ✅ 긴 본문도 화면 안에서 스크롤 */
+      overflow-y:auto;         /* ✅ 내부 스크롤 */
+      background:var(--solid);
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow:var(--sh);
+      padding:16px;
+    }
     hr{border:none;border-top:1px solid var(--line);margin:12px 0}
     .mut{color:var(--mut)}
     .kbd{border:1px solid var(--line);border-radius:8px;padding:3px 8px;color:var(--mut);font-size:12px}
     .badge{display:inline-block;padding:2px 8px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:#b9c8dc}
+
+    /* ✅ 모바일 최적화 */
+    @media(max-width:600px){
+      .main{padding:12px}
+      .grid.cols-2{grid-template-columns:1fr}
+      .story{padding:12px;font-size:15px}
+      .header{flex-wrap:wrap;gap:6px}
+      .header-nav{width:100%;justify-content:center}
+      .btn{padding:8px 10px;font-size:14px}
+      h2,h3,h4{font-size:18px}
+    }
   </style>
 </head>
 <body>
@@ -292,6 +305,9 @@ async function loadHome(){
     const el=document.createElement("div"); el.className="story";
     el.innerHTML = `<h4>${esc(s.title)}</h4>
       <p>${esc((s.text||"").slice(0,160))}${(s.text||"").length>160?"…":""}</p>`;
+    /* ✅ 홈 카드도 클릭으로 읽기 */
+    const openStory = () => openModal(s.title, `<div style="white-space:pre-wrap;line-height:1.65">${esc(s.text||"").replace(/\n/g,"<br>")}</div>`);
+    el.addEventListener("click", openStory);
     box.appendChild(el);
   });
 }
@@ -353,10 +369,15 @@ async function loadStories(){
         <button class="btn" data-read>읽기</button>
         ${isAdmin?'<button class="btn" data-edit>수정</button><button class="btn" data-del>삭제</button>':""}
       </div>`;
-    el.querySelector("[data-read]").onclick=()=>openModal(s.title, `<div style="white-space:pre-wrap;line-height:1.65">${esc(s.text||"").replace(/\n/g,"<br>")}</div>`);
+    /* ✅ 카드 전체 클릭으로 열기 */
+    const openStory = () => openModal(s.title, `<div style="white-space:pre-wrap;line-height:1.65">${esc(s.text||"").replace(/\n/g,"<br>")}</div>`);
+    el.addEventListener("click", openStory);
+    /* ✅ 버튼 클릭 시 버블 막아서 카드중복 오픈 방지 */
+    el.querySelector("[data-read]").onclick = e => { e.stopPropagation(); openStory(); };
     if(isAdmin){
-      el.querySelector("[data-edit]").onclick=()=>openEditStory(doc.id,s);
-      el.querySelector("[data-del]").onclick=async()=>{
+      el.querySelector("[data-edit]").onclick = e => { e.stopPropagation(); openEditStory(doc.id,s); };
+      el.querySelector("[data-del]").onclick = async e => {
+        e.stopPropagation();
         if(!confirm("삭제할까요?")) return;
         await db.collection("stories").doc(doc.id).delete();
         toast("삭제됨"); loadStories(); renderAdmin();
@@ -401,20 +422,26 @@ async function renderNextList(){
       <div class="badge">${p.status==="pending"?"대기중":p.status==="approved"?"승인됨":"거절됨"}</div>
       <h4>${esc(p.title)}</h4>
       <p>${esc(p.text).replace(/\n/g,"<br>")}</p>
-      <div class="mut">${esc(p.author||"익명")} • ${formatDate(p.created)}</div>
+      <div class="mut">${esc(p.author||("익명"))} • ${formatDate(p.created)}</div>
       ${isAdmin?`<div class="actions">
         <button class="btn" data-approve>승인</button>
         <button class="btn" data-reject>거절</button>
         <button class="btn" data-del>삭제</button>
       </div>`:""}
     `;
+    /* ✅ 카드 클릭으로 읽기 미리보기(제안 본문) */
+    const openProposal = () => openModal(p.title, `<div style="white-space:pre-wrap;line-height:1.65">${esc(p.text||"").replace(/\n/g,"<br>")}</div>`);
+    el.addEventListener("click", openProposal);
+
     if(isAdmin){
-      el.querySelector("[data-approve]").onclick=()=>approveProposal(doc.id,p);
-      el.querySelector("[data-reject]").onclick=async()=>{
+      el.querySelector("[data-approve]").onclick=(e)=>{e.stopPropagation(); approveProposal(doc.id,p);};
+      el.querySelector("[data-reject]").onclick=async(e)=>{
+        e.stopPropagation();
         await db.collection("nextProposals").doc(doc.id).update({status:"rejected"});
         toast("거절 처리"); renderNextList(); renderAdminNext();
       };
-      el.querySelector("[data-del]").onclick=async()=>{
+      el.querySelector("[data-del]").onclick=async(e)=>{
+        e.stopPropagation();
         if(!confirm("제안을 삭제할까요?")) return;
         await db.collection("nextProposals").doc(doc.id).delete();
         toast("삭제됨"); renderNextList(); renderAdminNext();
@@ -459,7 +486,7 @@ async function loadGroups(){
   $("group-box").style.display="none";
   const snap=await db.collection("groups").orderBy("created","desc").get();
   if(snap.empty){
-    list.innerHTML='<div class="mut">아직 그룹이 없습니다.</div>';
+    list.innerHTML='<div class="mut">아직 그룹이 없습니다。</div>';
     return;
   }
   snap.forEach(doc=>{
@@ -472,10 +499,11 @@ async function loadGroups(){
         <button class="btn pri" data-open>들어가기</button>
         ${isAdmin?'<button class="btn" data-edit>수정</button><button class="btn" data-del>삭제</button>':""}
       </div>`;
-    el.querySelector("[data-open]").onclick=()=>openGroup(doc.id,g);
+    el.querySelector("[data-open]").onclick=(e)=>{e.stopPropagation(); openGroup(doc.id,g);};
     if(isAdmin){
-      el.querySelector("[data-edit]").onclick=()=>openEditGroup(doc.id,g);
-      el.querySelector("[data-del]").onclick=async()=>{
+      el.querySelector("[data-edit]").onclick=(e)=>{e.stopPropagation(); openEditGroup(doc.id,g);};
+      el.querySelector("[data-del]").onclick=async(e)=>{
+        e.stopPropagation();
         if(!confirm("그룹을 삭제할까요?")) return;
         await db.collection("groups").doc(doc.id).delete();
         toast("삭제됨"); loadGroups(); renderAdmin();
@@ -548,13 +576,17 @@ async function loadGroupPosts(groupId){
         `:''}
       </div>
     `;
+    /* 카드 클릭 시 게시글 미리보기 */
+    el.addEventListener("click", ()=>openModal(p.title, `<div style="white-space:pre-wrap;line-height:1.65">${esc(p.text||"").replace(/\n/g,"<br>")}</div>`));
     if(isAdmin){
-      el.querySelector("[data-pin]").onclick=async()=>{
+      el.querySelector("[data-pin]").onclick=async(e)=>{
+        e.stopPropagation();
         await db.collection("groupPosts").doc(p.id).update({pinned:!p.pinned});
         loadGroupPosts(groupId);
       };
-      el.querySelector("[data-edit]").onclick=()=>openEditPost(p.id,p);
-      el.querySelector("[data-del]").onclick=async()=>{
+      el.querySelector("[data-edit]").onclick=(e)=>{e.stopPropagation(); openEditPost(p.id,p);};
+      el.querySelector("[data-del]").onclick=async(e)=>{
+        e.stopPropagation();
         if(!confirm("게시글을 삭제할까요?")) return;
         await db.collection("groupPosts").doc(p.id).delete();
         toast("삭제됨"); loadGroupPosts(groupId);
@@ -618,8 +650,10 @@ async function loadAdminSeries(){
         <button class="btn" data-edit>수정</button>
         <button class="btn" data-del>삭제</button>
       </div>`;
-    el.querySelector("[data-edit]").onclick=()=>openEditSeries(doc.id,s);
-    el.querySelector("[data-del]").onclick=async()=>{
+    el.addEventListener("click", ()=>openModal(s.name, `<div class="mut">${esc(s.desc||"설명 없음")}</div>`)); /* 시리즈 카드도 클릭 가능 */
+    el.querySelector("[data-edit]").onclick=(e)=>{e.stopPropagation(); openEditSeries(doc.id,s);};
+    el.querySelector("[data-del]").onclick=async(e)=>{
+      e.stopPropagation();
       if(!confirm("시리즈 삭제? (책은 남습니다)")) return;
       await db.collection("series").doc(doc.id).delete();
       toast("삭제됨"); loadSeriesTabs(); renderAdmin();
@@ -683,8 +717,10 @@ async function loadAdminStories(){
         <button class="btn" data-edit>수정</button>
         <button class="btn" data-del>삭제</button>
       </div>`;
-    el.querySelector("[data-edit]").onclick=()=>openEditStory(doc.id,s);
-    el.querySelector("[data-del]").onclick=async()=>{
+    el.addEventListener("click", ()=>openModal(s.title, `<div style="white-space:pre-wrap;line-height:1.65">${esc(s.text||"").replace(/\n/g,"<br>")}</div>`));
+    el.querySelector("[data-edit]").onclick=(e)=>{e.stopPropagation(); openEditStory(doc.id,s);};
+    el.querySelector("[data-del]").onclick=async(e)=>{
+      e.stopPropagation();
       if(!confirm("삭제할까요?")) return;
       await db.collection("stories").doc(doc.id).delete();
       toast("삭제됨"); loadStories(); renderAdmin();
@@ -741,8 +777,10 @@ async function loadAdminGroups(){
         <button class="btn" data-edit>수정</button>
         <button class="btn" data-del>삭제</button>
       </div>`;
-    el.querySelector("[data-edit]").onclick=()=>openEditGroup(doc.id,g);
-    el.querySelector("[data-del]").onclick=async()=>{
+    el.addEventListener("click", ()=>openModal(g.name, `<div class="mut">${esc(g.desc||"설명 없음")}</div>`));
+    el.querySelector("[data-edit]").onclick=(e)=>{e.stopPropagation(); openEditGroup(doc.id,g);};
+    el.querySelector("[data-del]").onclick=async(e)=>{
+      e.stopPropagation();
       if(!confirm("그룹 삭제?")) return;
       await db.collection("groups").doc(doc.id).delete();
       toast("삭제됨"); loadGroups(); renderAdmin();
@@ -812,18 +850,22 @@ async function renderAdminNext(){
         <button class="btn" data-del>삭제</button>
       </div>
     `;
+    row.addEventListener("click", ()=>openModal(p.title, `<div style="white-space:pre-wrap;line-height:1.65">${esc(p.text||"").replace(/\n/g,"<br>")}</div>`));
     const sel=row.querySelector(".ad-series");
-    row.querySelector("[data-approve]").onclick=async()=>{
+    row.querySelector("[data-approve]").onclick=async(e)=>{
+      e.stopPropagation();
       const sid=sel.value; if(!sid) return alert("시리즈를 선택하세요.");
       await db.collection("stories").add({seriesId:sid,title:p.title,text:p.text,created:new Date()});
       await db.collection("nextProposals").doc(doc.id).update({status:"approved"});
       toast("승인됨"); renderAdminNext(); loadStories();
     };
-    row.querySelector("[data-reject]").onclick=async()=>{
+    row.querySelector("[data-reject]").onclick=async(e)=>{
+      e.stopPropagation();
       await db.collection("nextProposals").doc(doc.id).update({status:"rejected"});
       toast("거절됨"); renderAdminNext(); renderNextList();
     };
-    row.querySelector("[data-del]").onclick=async()=>{
+    row.querySelector("[data-del]").onclick=async(e)=>{
+      e.stopPropagation();
       if(!confirm("삭제할까요?")) return;
       await db.collection("nextProposals").doc(doc.id).delete();
       toast("삭제됨"); renderAdminNext(); renderNextList();
@@ -848,7 +890,3 @@ window.addEventListener("load",()=>{
 </script>
 </body>
 </html>
-
-
-
-
